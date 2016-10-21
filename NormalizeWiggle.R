@@ -173,7 +173,7 @@ adjustHeaders <- function( headers, experiment, control, normalizationType, MACS
 
     for( i in 1:length(headers) ) {
     # to replace old header with new header
-        tmp <- headers[[i]][1,]
+        tmp <- headers[[i]][1]
         tmp <- strsplit( tmp, "=" )[[1]]
         if ( MACS == "MACS2" ) {
         # for each header replace description with new description while leaving name unchanged
@@ -181,7 +181,7 @@ adjustHeaders <- function( headers, experiment, control, normalizationType, MACS
         } else if ( MACS == "MACS14" ) {
             tmp[3] <- newdesc
         }
-        headers[[i]][1,] <- paste( tmp, collapse= "=" )
+        headers[[i]][1] <- paste( tmp, collapse= "=" )
     }
     return (headers)
 }
@@ -242,7 +242,8 @@ make.true.NA <- function(x) if(is.character(x)||is.factor(x)){
 ### MAIN
 
 main <- function( experiment, control, normalizationType=NA, exptMedian=NA, controlMedian=NA, filemakerIDs=NA ) {
-
+    print(paste0("Experiment file is:", experiment))
+    print(paste0("Control file is:", control))
     normalizationType <- make.true.NA( normalizationType )
     exptMedian <- make.true.NA( exptMedian )
     controlMedian <- make.true.NA( controlMedian )
@@ -257,13 +258,15 @@ main <- function( experiment, control, normalizationType=NA, exptMedian=NA, cont
     } else if ( test1 == TRUE ) {
         # if files
         if ( sum( grepl( "\\.wig", c(experiment, control) ) ) == 2 ) {
-            # if both files are wiggle files
-            exptData <- read.table( experiment, skip=2 )
-            controlData <- read.table( control, skip=2 )
+            # if both files are wiggle file
+            exptDataA <- read.table( experiment, skip=2 )
+            controlDataA <- read.table( control, skip=2 )
             headers <- read.table( experiment, nrows=2, sep="\n", stringsAsFactors= FALSE )
              # To remove all positions which do not have at least one read aligned for BOTH treatment and control
-            controlData <- list( na.omit( controlData[match( exptData[,1], controlData[,1] ),] ) )
-            exptData <- list( na.omit( exptData[match( controlData[,1], exptData[,1] ),] ) )
+            controlDataB <- na.omit( controlDataA[match( exptDataA$V1, controlDataA$V1 ),] )
+	    controlData <- list( controlDataB )
+            exptDataB <- na.omit( exptDataA[match( controlDataA$V1, exptDataA$V1 ),] )
+	    exptData <- list( exptDataB )
         } else {
             stop( "At least one file is not a wiggle file." )
         }
@@ -330,6 +333,7 @@ main <- function( experiment, control, normalizationType=NA, exptMedian=NA, cont
     } else {
         MACS <- "MACS2"
     }
+    print(paste0("Outname base is: ",outname.base))
 
     # dealing with filemakerIDs
     if ( !( is.na(filemakerIDs) ) ) {
@@ -347,25 +351,44 @@ main <- function( experiment, control, normalizationType=NA, exptMedian=NA, cont
         if ( length(unknownID) != 1 ) {
             if ( length(knownID) != 1 ) {
                 outname.base.part <- strsplit( outname.base, knownID[2] )[[1]]
-                newIDs <- paste( c(knownID[2], unknownID[2:length(unknownID)]), collapse= "-" )
-            } else {
-                outname.base.part <- strsplit( outname.base, "-S")
+		if ( length(unknownID) != 2 ) {
+                    newIDs <- paste( c(knownID[2], unknownID[2:length(unknownID)]), collapse= "-")
+		    print("1")
+	    	} else {
+	      	    newIDs <- paste( knownID[2], unknownID[2], sep= "-" )
+		    print("2")
+            	} 
+                if ( length(outname.base.part) == 2 ) {
+		   outname.base <- paste0( outname.base.part[1], newIDs, outname.base.part[2] )                
+		   print ("5")
+            	} else {
+                   outname.base <- paste( c(outname.base.part[1], newIDs, outname.base.part[2:length(outname.base.part)]), collapse="")
+		   print("6")
+            	}
+	    } else {
+                outname.base.part <- strsplit( outname.base, "-S\\w+")[[1]]
+		print(outname.base.part)
                 tmp <- regexpr("-S\\w+", outname.base, perl=T )
-                newIDs <- paste( c(unknownID[2:length(unknownID)], regmatches( outname.base, tmp )), collapse= "-" )
-            }
-            if ( length(outname.base.part) == 2 ) {
-                outname.base <- paste( c( outname.base.part[1], newIDs, outname.base.part[2]), collapse="" )
-            } else {
-                outname.base <- paste0( c(outname.base.part[1], newIDs, outname.base.part[2:length(outname.base.part)]),
-                                       collapse="")
-            }
+		print(tmp)
+            	if ( length(unknownID) != 2 ) {
+		   print("3")
+                   newID <- paste( c(unknownID[2:length(unknownID)]), collapse= "-" )
+                   newIDs <- paste0( newID, regmatches( outname.base, tmp ) )
+		} else {
+		  print("4")
+		   newIDs <- paste( unknownID[2], regmatches( outname.base, tmp ), sep= "" )
+		   print(newIDs)
+            	} 
+		outname.base <- paste0( outname.base.part[1], "-", newIDs, outname.base.part[2] )
+	    }
         }                                                
+	print( paste0( "New outname base is: ", outname.base ) )
     }
     
     if ( test1 == TRUE ) {
     # to get final file name for output when single file
         chr <- strsplit( tail( strsplit( experiment, split="_" )[[1]], n=1), split="\\." )[[1]][1]
-        fileNames <- paste0( outname.base, "_", MACS, normalizationType, "_", chr, ".wig" )
+        fileNames <- paste0( outname.base, "_", MACS, "_", normalizationType, "_", chr, ".wig" )
     } else {
         outRoot <- paste0( outname.base, "_", MACS, "_", normalizationType )
         if ( normalizationType != "wiggle_norm" ) {
