@@ -293,8 +293,8 @@ main <- function( experiment, control, normalizationType=NA, exptMedian=NA, cont
         if ( is.na(exptMedian) & is.na(controlMedian) ) {
             controlMedian <- medianCalc( controlData )
             exptMedian <- medianCalc( exptData )
-            print ( paste0( "Median value for control (", control, ") is: ", controlMedian ) )
-            print ( paste0( "Median value for experiment (", experiment, ") is: ", exptMedian ) )
+            print ( paste0( "Median value for control ", control, " is: ", controlMedian ) )
+            print ( paste0( "Median value for experiment ", experiment, " is: ", exptMedian ) )
         } else if (  is.na(exptMedian) | is.na(controlMedian) ) {
             stop( "Be careful: Either include two median values or none." )
         } else {
