@@ -1,0 +1,396 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=6,walltime=04:00:00
+#PBS -N MACS2_pipeline_v2
+#PBS -M ${USER}@nyu.edu
+#PBS -m abe
+#PBS -o localhost:/scratch/${USER}/${PBS_JOBNAME}.o${PBS_JOBID}
+#PBS -e localhost:/scratch/${USER}/${PBS_JOBNAME}.o${PBS_JOBID}
+
+# created by: Tovah Markowitz
+# created on: 04/07/2016
+# adjusted for median normalization
+# adjusted on: 9/28/16
+# adjusted to adjust rep names and fix bugs
+# adjusted to handle more than 2 replicates
+# 10/2/16: fixed typo for double norm
+
+# Requires the following files in a folder called Pipeline in home:
+#    MACS2_functions_v2b.sh, Bedgraph2VariableStepWiggle.py, NormalizeWiggle.R, ExtractMedian_MACS2_pipeline.pl
+# Will also require other file if using Bowtie
+#################################################################################################################
+## VARIABLES                                                                                                    #
+#                                                                                                               #
+### NOTE: currently can only handle FASTQ inputs or replicates/double normalization; Bowtie analysis is too     #
+### memory intensive for more.                                                                                  #
+### NOTE: Tag names should not need to include the words "MACS2", "input", "reps", or anything related to the   #
+### Bowtie alignment. All are added to the names within the script. No underscores allowed.                     #
+#                                                                                                               #
+# MAIN VARIABLES                                                                                                #
+#   CHIP     -- Only required feature. May be SAM, BAM, or FASTQ file.                                          #
+#               See below for specialized cases (bowtie alignment, replicates, or double normalization )        #
+#   INPUT    -- May be SAM, BAM, or FASTQ file. See below for specialized cases.                                #
+#                                                                                                               #
+# GENERIC VARIABLES                                                                                             #
+#   FLDR      -- Input folder name [ default: working directory when submitting job ]                           #
+#                Location where MACS2 output folders will reside                                                #
+#   PEAK      -- When set to TRUE, MACS2 will be set to call peaks. [ default: TRUE ]                           #
+#   WIG       -- When set to TRUE, MACS2 will be set to make normalized wiggle files. [ default: TRUE ]         #
+#                Also makes narrowPeak and summit files.                                                        #
+#   NMOD      -- When set to TRUE, MACS2 will automatically use an extension size of 200bp. [ default: FALSE ]  #
+#   MLOW      -- Only works when NMOD is FALSE. To lower the minimum mfold value and increase MACS2 ability to  #
+#                estimate the average fragment size. Max: 49. [ default: 5 ]                                    #
+#                                                                                                               #
+# BOWTIE ALIGNMENT                                                                                              #
+## Note: To only align to a single genome and stop script: use variables CHIP and TAGC                          #
+## Note: CHIP and INPUT do not both need to begin with FASTQ files                                              #
+#   TAGI      -- Tagname for INPUT FASTQ                                                                        #
+#   TAGC      -- Tagname for CHIP FASTQ                                                                         #
+#   GEN       -- Genome to align to. Current options: SK1 or SacCer3                                            #
+#                                                                                                               #
+# REPLICATES                                                                                                    #
+## Note: Current method for replicates involves merging the SAM files and then running through MACS2            #
+#   INPUT     -- SAM/BAM files in a colon-delimited and quoted list                                             #
+#   CHIP      -- SAM/BAM files in a colon-delimited and quoted list                                             #
+#   REP       -- tagname for the replicates                                                                     #
+#   FLMKR     -- filemaker IDs from Datasets of ChIP samples in colon-delimited and quoted list                 #
+#                Should not be strain IDS.                                                                      #
+#                                                                                                               #
+# DOUBLE NORMALIZATION                                                                                          #
+## For mock controls, no tag controls, or histones                                                              #
+## If PEAK is TRUE, MACS2 will consider CHIP as the treatment and CHCON as the control                          #
+## If WIG is TRUE, MACS2 will first normalize against the inputs and then against the second control            #
+#   INCON     -- control SAM/BAM input file                                                                     #
+#   CHCON     -- control SAM/BAM ChIP file                                                                      #
+#   REPCON    -- tagname for control replicates                                                                 #
+#   FLMKRCON  -- filemaker ID#s of control ChIP samples (reps) in colon-delimited and quoted list               #
+#                                                                                                               #
+# SOME EXAMPLES                                                                                                 #
+# To get peaks and bedgraph for input file A.sam and ChIP file B.sam:                                           #
+#    qsub -v INPUT=A.sam,CHIP=B.sam ~/MACS2_pipeline_v2b.pbs                                                    #
+# To get only a bedgraph for input file A.sam and ChIP file B.sam and allow for a lower M-fold value of 2:      #
+#    qsub -v INPUT=A.sam,CHIP=B.sam,PEAK=F,MLOW=2 ~/MACS2_pipeline_v2b.pbs                                      #
+# To get peak files for input files A_1.sam and A_2.sam and ChIP files B_1.sam and B_2.sam:                     #
+#    qsub -v INPUT="A_1.sam:A_2.sam",CHIP="B_1.sam:B_2.sam",REP="B",FLMKR="1:15",WIG=F ~/MACS2_pipeline_v2b.pbs #
+# To normalize input file A.sam and ChIP file B.sam by control input file C_A.sam and control ChIP file C_B.sam #
+#    qsub -v INPUT=A.sam,CHIP=B.sam,INCON=C_A.sam,CHCON=C_B.sam ~/MACS2_pipeline_v2b.pbs                        #
+# To make a wiggle plot from input A.fastq and ChIP B.fastq, mapping to SacCer3:                                #
+#    qsub -v INPUT="A.fastq",CHIP="B.fastq",GEN="SacCer3",TAGI="A",TAGC="B" ~/MACS2_pipeline_v2b.pbs            #
+#################################################################################################################
+
+###
+# check for shell functions
+if [ -f ~/Pipeline/MACS2_functions_v2b.sh ]; then
+    source ~/Pipeline/MACS2_functions_v2b.sh
+else
+    echo "Cannot find MACS2_functions_v2b.sh. Should be in ~/Pipeline/"
+    exit 1
+fi
+
+# change to folder
+if [[ $FLDR == "" ]]; then
+    cd $PBS_O_WORKDIR
+else
+    cd /scratch/${USER}
+    cd $FLDR
+fi
+
+echo "working in:" $PWD
+
+# ensure that folder called Bowtie exists if not running bowtie alignment
+#if [[ $GEN == "" ]]; then
+#    test -d Bowtie || ( echo "Cannot find folder Bowtie" && exit 1 ) 
+#fi
+# changing this: either SAM/BAM location is defined in previous or we start with FASTQ
+
+### ensure that if starting with FASTQ no other complex features are being used
+# also make sure all tag names do NOT include underscores
+if [[ $GEN != "" ]]; then
+    TAGI=$(echo $TAGI | tr '_' '-')
+    TAGC=$(echo $TAGC | tr '_' '-')
+    if [[ $REP != "" || $CHCON != "" ]]; then
+	echo "Cannot start with FASTQ files and use replicates or double normalization"
+	exit 1
+    fi
+fi
+
+if [[ $REP != "" ]]; then
+    REP=$(echo $REP | tr '_' '-')
+fi
+
+if [[ $CHCON != "" ]]; then
+    REPCON=$(echo $REPCON | tr '_' '-')
+fi
+
+### Bowtie alignment of FASTQ data, needs GEN, TAGI, and TAGC
+if [[ $GEN != "" ]]; then 
+    if [[ $INPUT != "" ]]; then
+	countAlign=(1 2)
+    else
+	countAlign=1 
+    fi
+    for k in ${countAlign[@]}; do
+	if [[ $k == 1 ]]; then
+	    BWIN=$CHIP
+	    TAGIN=$TAGC
+	else
+	    BWIN=$INPUT
+	    TAGIN=$TAGI
+	fi
+	if [[ $BWIN =~ .fastq|.fq ]]; then
+	    if [[ $TAGIN == "" ]]; then
+		echo "You forgot to include a tagname for $BWIN"
+		exit 1
+	    else
+		case $GEN in
+		    SK1 ) test -f $TAGIN-SK1K-PM.sam || bowtie_SK1 $BWIN $TAGIN
+#			echo "ran bowtie_SK1 on $BWIN with $TAGIN"
+			TREAT=Bowtie/$TAGC-SK1K-PM.sam
+			CONTROL=Bowtie/$TAGI-SK1K-PM.sam
+			;;
+		    SacCer3 ) 
+			if [ ! -f $TAGIN-SacCer3-2mis.sam ]; then
+			    bowtie_SacCer3 $BWIN $TAGIN
+#			    echo "ran bowtie_SacCer3 on $BWIN with $TAGIN"
+			fi
+			TREAT=Bowtie/$TAGC-SacCer3-2mis.sam
+			CONTROL=Bowtie/$TAGI-SacCer3-2mis.sam
+			;;
+		    * ) echo "Unknown genome listed."
+			exit 1
+		esac
+	    fi
+	fi
+    done
+fi
+
+### Merging replicates of SAM/BAM files, requires REP
+if [[ $REP != "" ]]; then
+# split into arrays with : as delimiter
+    IFS=":" read -ra IN_LIST <<< "$INPUT"
+    IFS=":" read -ra CH_LIST <<< "$CHIP"
+    IFS=":" read -ra FL_LIST <<< "$FLMKR"
+    INindices=(${!IN_LIST[*]})
+    CHindices=(${!CH_LIST[*]})
+    FLindices=(${!FL_LIST[*]})
+    if [[ ${INindices[@]} != ${CHindices[@]} ]]; then
+	echo "Input and ChIP samples have different number of files."
+	echo "Current handling of replicates requires equal number of files."
+	exit 1
+    fi
+    if [[ ${FLindices[@]} != ${CHindices[@]} ]]; then
+	echo "ChIP samples and Filemaker IDs have different number inputs into function."
+	exit 1
+    fi
+    RE='(.+)-(S.+).(sam|bam)'
+# allow for duplicates in both ChIP and control (double normalization)
+    if [[ $INCON != "" || $CHCON != "" || $REPCON != "" ]]; then
+	echo "analyzing replicates for double normalization"
+	IFS=":" read -ra IN_LIST2 <<< "$INCON"
+	IFS=":" read -ra CH_LIST2 <<< "$CHCON"
+	IFS=":" read -ra FL_LIST2 <<< "$FLMKRCON"
+	INindices2=(${!IN_LIST2[*]})
+	CHindices2=(${!CH_LIST2[*]})
+	FLindices2=(${!FL_LIST2[*]})
+	if [[  ${INindices[@]} == ${CHindices2[@]} && ${INindices[@]} == ${INindices2[@]} ]]; then
+	    count=(1 2)    
+	else
+	    echo "If doing double normalization, INPUT, CHIP, INCON, and CHCON must have equal number of files."
+	    exit 1
+	fi
+    if [[ ${FLindices2[@]} != ${CHindices2[@]} ]]; then
+	echo "Control ChIP samples and Filemaker IDs have different number inputs into function."
+	exit 1
+    fi
+    else
+	count=1
+    fi
+    for j in ${count[@]}
+    do
+	if [[ $j == 1 ]]; then
+	    INPUT_LIST=${IN_LIST[@]}
+	    CHIP_LIST=${CH_LIST[@]}
+	    Iindices=${INindices[@]}
+	    Cindices=${CHindices[@]}
+	    REP_NAME=$REP
+	    FLMKR2=$FLMKR
+	else
+	    ROOT_SAVE=$ROOTA
+	    INPUT_LIST=${IN_LIST2[@]}
+	    CHIP_LIST=${CH_LIST2[@]}
+	    Iindices=${INindices2[@]}
+	    Cindices=${CHindices2[@]}
+	    REP_NAME=$REPCON
+	    FLMKR2=$FLMKRCON
+	fi
+# ensure Input and ChIP have same number of files and files have matching names
+	if [[ ${INPUT_LIST[0]} =~ $RE ]]; then
+	    ROOTA=${BASH_REMATCH[2]}
+	else
+	    echo "Input file ${INPUT_LIST[0]} is in the incorrect format"
+	    exit 1
+	fi
+	if [[ ${CHIP_LIST[0]} =~ $RE ]]; then
+	    ROOTB=${BASH_REMATCH[2]}
+	else
+	    echo "ChIP file ${CHIP_LIST[0]} is in the incorrect format"
+	    exit 1
+	fi
+	if [[ $ROOTA != $ROOTB ]]; then
+	    echo "Filenames ( ${INPUT_LIST[0]} and ${CHIP_LIST[0]} ) do not have the same root names."
+	    exit 1
+	fi
+	if [[ $ROOTSAVE != "" && $ROOTSAVE != $ROOTA ]]; then
+	    echo "All files do not have the same root names."
+	    exit 1
+	fi
+	FLMKRIDS=$(echo $FLMKR2 | tr ':' '-')
+	
+	cA=0
+	for i in `echo "${INPUT_LIST[@]}"`;
+	do
+	    if [[ $cA == 0 ]]; then
+		FILEINPUT1=$i
+	    elif [[ $cA == 1 ]]; then
+		FILEINPUT2=$i
+		replicate_merge $FILEINPUT1 $FILEINPUT2 ${REP_NAME}-${FLMKRIDS}_input
+	    else
+		replicate_merge $i RepBam/${REP_NAME}-${FLMKRIDS}_input-reps-${ROOTA}.bam ${REP_NAME}-${FLMKRIDS}_input
+	    fi
+	    cA=$((cA+1))
+	done
+
+	cB=0
+	for k in `echo "${CHIP_LIST[@]}"`;
+	do
+	    if [[ $cB == 0 ]]; then
+		FILECHIP1=$k
+	    elif [[ $cB == 1 ]]; then
+		FILECHIP2=$k
+		replicate_merge $FILECHIP1 $FILECHIP2 ${REP_NAME}-${FLMKRIDS}
+	    else
+		replicate_merge $k RepBam/${REP_NAME}-${FLMKRIDS}-reps-${ROOTA}.bam ${REP_NAME}-${FLMKRIDS}
+	    fi
+	    cB=$((cB+1))
+	done
+    done
+fi
+
+### IF using basic settings, assign to TREAT and CONTROL for peak calling and bedgraph creation
+if [[ $CHCON == "" ]]; then
+    if [[ $REP == "" ]]; then
+	if [[ $GEN == "" ]]; then 
+	    TREAT=$CHIP 
+	    CONTROL=$INPUT
+	fi
+    else
+	TREAT=RepBam/${REP}-${FLMKRIDS}-reps-${ROOTA}.bam
+	CONTROL=RepBam/${REP}-${FLMKRIDS}_input-reps-${ROOTA}.bam
+    fi
+fi
+
+# General Peak calling and bedgraph creation
+if [[ $CHCON == "" ]]; then
+    if [[ $PEAK == "" || $PEAK =~ "T" ]]; then
+	if [[ $NMOD == "" || $NMOD =~ "F" ]]; then
+            peak_call $TREAT $CONTROL $MLOW
+	else
+	    peak_call_nomodel $TREAT $CONTROL
+	fi
+    fi
+    if [[ $WIG == "" || $WIG =~ "T" ]]; then
+	if [[ $NMOD == "" || $NMOD =~ "F" ]]; then
+            create_bedgraph $TREAT $CONTROL $MLOW
+	else
+	    create_bedgraph_nomodel $TREAT $CONTROL
+	fi
+    fi
+else
+# if using replicates for double normalization need to adjust naming system
+    if [[ $REPCON != "" ]]; then
+	FL1=$(echo $FLMKR | tr ':' '-')
+	FL2=$(echo $FLMKRCON | tr ':' '-')
+	FL3=$FL1-$FL2
+	CHIPD=RepBam/${REP}-$FL1-reps-${ROOTA}.bam
+	INPUTD=RepBam/${REP}-${FL1}_input-reps-${ROOTA}.bam
+	CHCOND=RepBam/${REPCON}-$FL2-reps-${ROOTA}.bam
+	INCOND=RepBam/${REPCON}-${FL2}_input-reps-${ROOTA}.bam
+	if [[ $NMOD == "" || $NMOD =~ "F" ]]; then
+	    if [[ $MLOW == "" ]]; then MLOW=5; fi
+		CHIPD2=$REP-$FL1-reps-MACS2/$REP-$FL1-reps-$ROOTA-M${MLOW}_MACS2_wiggle_norm
+		CHCOND2=$REPCON-$FL2-reps-MACS2/$REPCON-$FL2-reps-$ROOTA-M${MLOW}_MACS2_wiggle_norm
+	else
+	    CHIPD2=$REP-$FL1-reps-MACS2/$REP-$FL1-reps-${ROOTA}_MACS2_wiggle_norm
+	    CHCOND2=$REPCON-$FL2-reps-MACS2/$REPCON-$FL2-reps-${ROOTA}_MACS2_wiggle_norm
+	fi
+    else
+	# If only doing double normalization, name splitting is necessary here
+	CHIPD=$CHIP
+	INPUTD=$INPUT
+	CHCOND=$CHCON
+	INCOND=$INCON
+	FL3=$FLMKR-$FLMKRCON
+	if [[ $CHIPD == */* ]]; then
+	    RE1='/(.+)-(S.+).(sam|bam)'
+	else
+	    RE1='(.+)-(S.+).(sam|bam)'
+	fi
+	if [[ $CHCOND == */* ]]; then
+	    RE2='/(.+)-(S.+).(sam|bam)'
+	else
+	    RE2='(.+)-(S.+).(sam|bam)'
+	fi
+	if [[ $CHIPD =~ $RE1 ]]; then
+            INCH=${BASH_REMATCH[1]}
+            ROOTCH=${BASH_REMATCH[2]}
+	fi
+	if [[ $CHCOND =~ $RE2 ]]; then
+            INCON=${BASH_REMATCH[1]}
+            ROOTCON=${BASH_REMATCH[2]}
+	fi
+	if [[ $NMOD == "" || $NMOD =~ "F" ]]; then
+	    if [[ $MLOW == "" ]]; then MLOW=5; fi
+		CHIPD2=$INCH-MACS2/$INCH-$ROOTCH-M${MLOW}_MACS2_wiggle_norm
+		CHCOND2=$INCON-MACS2/$INCON-$ROOTCON-M${MLOW}_MACS2_wiggle_norm
+	else
+	    CHIPD2=$INCH-MACS2/$INCH-${ROOTCON}_MACS2_wiggle_norm
+	    CHCOND2=$INCON-MACS2/$INCON-${ROOTCON}_MACS2_wiggle_norm
+	fi
+    fi
+# Double normalization peak calling
+    if [[ $PEAK == "" || $PEAK =~ "T" ]]; then
+	if [[ $NMOD == "" || $NMOD =~ "F" ]]; then
+	    if [[ $MLOW == "" ]]; then MLOW=5; fi
+            peak_call $CHIPD $CHCOND $MLOW Dnorm
+	else
+	    peak_call_nomodel $CHIPD $CHCOND DNorm
+	fi
+    fi
+# Making individual bedgraphs for double normalization
+    if [[ $WIG == "" || $WIG =~ "T" ]]; then
+	for element in A B; do
+	    case $element in
+		A ) TREAT=$CHIPD; CONTROL=$INPUTD;;
+		B ) TREAT=$CHCOND; CONTROL=$INCOND;;
+	    esac
+	    if [[ $NMOD == "" || $NMOD =~ "F" ]]; then
+		create_bedgraph $TREAT $CONTROL $MLOW
+	    else
+		create_bedgraph_nomodel $TREAT $CONTROL
+	    fi
+	done
+# double normalization bedgraph
+wiggle_dnorm $CHIPD2 $CHCOND2 $FL3
+
+#	RE='(.+).(sam|bam)'
+#	if [[ $CHIPD =~ $RE ]]; then IN1=${BASH_REMATCH[1]}; fi
+#	if [[ $CHCOND =~ $RE ]]; then IN2=${BASH_REMATCH[1]}; fi
+#	if [[ $NMOD == "" || $NMOD =~ "F" ]]; then
+#	    wiggle_dnorm ${IN1}-M${MLOW}_MACS2_wiggle_norm ${IN2}-M${MLOW}_MACS2_wiggle_norm
+#	else
+#	     wiggle_dnorm ${IN1}_MACS2_wiggle_norm ${IN2}_MACS2_wiggle_norm
+
+#	fi
+    fi
+fi
+    
+exit 0;
