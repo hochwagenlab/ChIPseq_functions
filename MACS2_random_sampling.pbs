@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=2,walltime=04:00:00
+#PBS -l nodes=1:ppn=2,walltime=00:30:00
 #PBS -N MACS2_random_sampling
 #PBS -M ${USER}@nyu.edu
 #PBS -m abe
@@ -25,6 +25,7 @@ module load r/intel/3.2.2
 #              files. No quotes. Default: 1                                    #
 # Note: Because this function can be reused repeately, a random 9 digit number #
 # is incorporated into the output files for every individual repeat.           #
+# Note: increase walltime if NREPS goes above 10                               #
 #                                                                              #
 ################################################################################
 
@@ -37,8 +38,8 @@ if [[ $NREPS == "" ]]; then
     NREPS=1
 fi
 
-INPUT=$TREAT
-CHIP=$CONTROL
+TREAT=$INPUT
+CONTROL=$CHIP
 
 cd $PBS_O_WORKDIR
 STDIR=$PWD
