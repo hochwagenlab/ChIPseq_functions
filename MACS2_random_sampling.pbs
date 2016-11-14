@@ -38,8 +38,8 @@ if [[ $NREPS == "" ]]; then
     NREPS=1
 fi
 
-TREAT=$INPUT
-CONTROL=$CHIP
+TREAT=$CHIP
+CONTROL=$INPUT
 
 cd $PBS_O_WORKDIR
 STDIR=$PWD
