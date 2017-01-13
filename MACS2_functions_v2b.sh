@@ -31,12 +31,12 @@ function replicate_merge {
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
 if [[ $INPUT1 == */* ]]; then
-    RE1='/(.+)-(S.+).(sam|bam)'
+    RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
 if [[ $INPUT2 == */* ]]; then
-    RE2='/(.+)-(S.+).(sam|bam)'
+    RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
 fi
@@ -65,6 +65,12 @@ if [[ $INPUT2 =~ $RE2 ]]; then
 	echo "Filenames ($INPUT1 and $INPUT2) do not have the same root names and may not have been compared to the same genome scaffold or software."
 	exit 1
     fi
+
+# Before running this function, make sure output bam file doesn't already exist
+if [ -f RepBam/$OUTROOT-reps-${ROOT1}.bam ]; then
+    echo "RepBam/$OUTROOT-reps-${ROOT1}.bam already exists. Continuing."
+else
+
 # determine if first file is sam or bam, then convert into sorted bam
     if [[ $TYPE1 == sam ]]; then
 	samtools view -b -h $INPUT1 > RepBam/$IN1-$ROOT1.bam
@@ -101,9 +107,10 @@ if [[ $INPUT2 =~ $RE2 ]]; then
     if [ -e RepBam/tmp*.bam ]; then
 	rm RepBam/tmp*.bam
     fi
-
+fi
     echo "complete"
     date
+    echo ""
 }
 
 #########################################
@@ -232,7 +239,7 @@ fi
     perl ~/Pipeline/ExtractMedian_MACS2_pipeline.pl -f $IN-MACS2 -u $USER
     echo "complete"
     date
-    
+    echo ""
 }
 
 #########################################
@@ -345,6 +352,7 @@ fi
 
     echo "complete"
     date
+    echo ""
 }
 
 #########################################
@@ -437,6 +445,7 @@ fi
     
     echo "complete"
     date
+    echo ""
 }
 
 ##########################################
@@ -514,6 +523,7 @@ fi
 
     echo "complete"
     date
+    echo ""
 }
 
 ##########################################
@@ -572,6 +582,7 @@ fi
 
     echo "complete"
     date
+    echo ""
 
 }
 
@@ -608,7 +619,7 @@ function bowtie_SK1 {
 
     echo "complete"
     date
-
+    echo ""
 }
 
 ##########################################
@@ -644,5 +655,5 @@ function bowtie_SacCer3 {
     
     echo "complete"
     date
-    
+    echo ""
 }
