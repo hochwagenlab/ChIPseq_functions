@@ -173,7 +173,7 @@ adjustHeaders <- function( headers, experiment, control, normalizationType, MACS
 
     for( i in 1:length(headers) ) {
     # to replace old header with new header
-        tmp <- headers[[i]][1]
+        tmp <- headers[[i]]$V1[1]
         tmp <- strsplit( tmp, "=" )[[1]]
         if ( MACS == "MACS2" ) {
         # for each header replace description with new description while leaving name unchanged
@@ -181,7 +181,7 @@ adjustHeaders <- function( headers, experiment, control, normalizationType, MACS
         } else if ( MACS == "MACS14" ) {
             tmp[3] <- newdesc
         }
-        headers[[i]][1] <- paste( tmp, collapse= "=" )
+        headers[[i]]$V1[1] <- paste( tmp, collapse= "=" )
     }
     return (headers)
 }
