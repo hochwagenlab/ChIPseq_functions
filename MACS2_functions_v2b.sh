@@ -228,7 +228,7 @@ fi
     if [ -d  $OUTFILE ]; then
 	echo "already normalized $OUTFILE"
     else
-	R CMD BATCH "--args $TAGT-M${MLOW}_MACS2_control_lambda $TAGT-M${MLOW}_MACS2_treat_pileup" ~/Pipeline/NormalizeWiggle.R
+	R CMD BATCH "--args $TAGT-M${MLOW}_MACS2_treat_pileup $TAGT-M${MLOW}_MACS2_control_lambda" ~/Pipeline/NormalizeWiggle.R
     fi
 
     cd $STDIR
@@ -341,7 +341,7 @@ fi
     if [ -d  $OUTFILE ]; then
 	echo "already normalized $OUTFILE"
     else
-	R CMD BATCH "--args ${TAGT}_MACS2_control_lambda ${TAGT}_MACS2_treat_pileup" ~/Pipeline/NormalizeWiggle.R
+	R CMD BATCH "--args ${TAGT}_MACS2_treat_pileup ${TAGT}_MACS2_control_lambda" ~/Pipeline/NormalizeWiggle.R
     fi
 
     cd $STDIR
