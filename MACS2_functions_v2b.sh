@@ -47,7 +47,7 @@ fi
 	TYPE1=${BASH_REMATCH[3]}
     else
 	echo "Error: First input name ($INPUT1) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
@@ -57,7 +57,7 @@ if [[ $INPUT2 =~ $RE2 ]]; then
 	TYPE2=${BASH_REMATCH[3]}
     else
 	echo "Error: Second input name ($INPUT2) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
@@ -134,13 +134,13 @@ function create_bedgraph {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $TREAT == */* ]]; then
-    RE1='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT1 == */* ]]; then
+    RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $CONTROL == */* ]]; then
-    RE2='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT2 == */* ]]; then
+    RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
 fi
@@ -150,7 +150,7 @@ fi
 	ROOT1=${BASH_REMATCH[2]}
     else
 	echo "Error: Treatment filename ($TREAT) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
@@ -159,7 +159,7 @@ fi
 	ROOT2=${BASH_REMATCH[2]}
     else
 	echo "Error: Control filename ($CONTROL) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
@@ -262,13 +262,13 @@ function create_bedgraph_nomodel {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $TREAT == */* ]]; then
-    RE1='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT1 == */* ]]; then
+    RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $CONTROL == */* ]]; then
-    RE2='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT2 == */* ]]; then
+    RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
 fi
@@ -278,7 +278,7 @@ fi
 	ROOT1=${BASH_REMATCH[2]}
     else
 	echo "Error: Treatment filename ($TREAT) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
@@ -287,7 +287,7 @@ fi
 	ROOT2=${BASH_REMATCH[2]}
     else
 	echo "Error: Control filename ($CONTROL) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
@@ -377,13 +377,13 @@ function peak_call {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $TREAT == */* ]]; then
-    RE1='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT1 == */* ]]; then
+    RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $CONTROL == */* ]]; then
-    RE2='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT2 == */* ]]; then
+    RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
 fi
@@ -393,7 +393,7 @@ fi
 	ROOT1=${BASH_REMATCH[2]}
     else
 	echo "Error: Treatment filename ($TREAT) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
     
@@ -402,7 +402,7 @@ fi
 	ROOT2=${BASH_REMATCH[2]}
     else
 	echo "Error: Control filename ($CONTROL) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
     
@@ -469,13 +469,13 @@ function peak_call_nomodel {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $TREAT == */* ]]; then
-    RE1='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT1 == */* ]]; then
+    RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $CONTROL == */* ]]; then
-    RE2='/(.+)-(S.+).(sam|bam)'
+if [[ $INPUT2 == */* ]]; then
+    RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
 fi
@@ -485,7 +485,7 @@ fi
 	ROOT1=${BASH_REMATCH[2]}
     else
 	echo "Error: Treatment filename ($TREAT) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
@@ -494,7 +494,7 @@ fi
 	ROOT2=${BASH_REMATCH[2]}
     else
 	echo "Error: Control filename ($CONTROL) is incorrect."
-	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command."
+	echo "Either it is not labelled as a .sam or .bam or it is not in the correct format for this command. Correct pattern is (.+)-(S.+).(sam|bam). In other words, make sure the file has -S, no other dashes, and ends sam or bam. Both relative and complete paths are accepted."
 	exit 1
     fi
 
