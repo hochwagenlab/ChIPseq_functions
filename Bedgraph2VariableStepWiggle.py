@@ -35,7 +35,11 @@ def read_bedgraph(bedgraph):
 
     bedD = defaultdict(list)
     for i in bedG:
-        bedD[i[0]].append( map(float, i[1:]) )
+        if len(i) != 4:
+            print "Some rows in this bedgraph are not complete. Cannot create a wiggle file.\n"
+            exit()
+        else:
+            bedD[i[0]].append( map(float, i[1:]) )
 
     # step 3: for each chromosome do numeric sort by start
     for key in bedD.keys():
