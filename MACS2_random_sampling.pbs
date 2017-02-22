@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=2,walltime=00:30:00
+#PBS -l nodes=1:ppn=2,walltime=01:00:00
 #PBS -N MACS2_random_sampling
 #PBS -M ${USER}@nyu.edu
 #PBS -m abe
@@ -25,7 +25,7 @@ module load r/intel/3.2.2
 #              files. No quotes. Default: 1                                    #
 # Note: Because this function can be reused repeately, a random 9 digit number #
 # is incorporated into the output files for every individual repeat.           #
-# Note: increase walltime if NREPS goes above 10                               #
+# Note: increase walltime if NREPS goes above 4                                #
 #                                                                              #
 ################################################################################
 
@@ -34,15 +34,21 @@ if [[ $NREADS == "" ]]; then
     NREADS="5e+6"
 fi
 
+echo "Subsampling to $NREADS reads."
+
 if [[ $NREPS == "" ]]; then
     NREPS=1
 fi
+
+echo "Repeating subsampling $NREPS times"
 
 TREAT=$CHIP
 CONTROL=$INPUT
 
 cd $PBS_O_WORKDIR
 STDIR=$PWD
+
+echo "working in $STDIR"
 
 ## Checking file names and extracting pertitent information
 if [[ $TREAT == */* ]]; then
@@ -74,18 +80,26 @@ fi
         exit 1
     fi
 
+#for i in $(seq 1 $NREPS); do echo $i; done
+
+#for ((i=1;i<=$NREPS;i++)); do echo $i; done
+
+#for i in $(eval echo "{1..$NREPS}"); do echo $i; done
+
 # starting loop here
-for i in {1..$NREPS}; do
+for ((i=1;i<=$NREPS;i++)); do
+    date
+    echo "Currently on replicate number: $i"    
 
     if [[ $ROOT1 != $ROOT2 ]]; then
-        echo "Filenames ($TREAT and $CONTROL) do not have the same root names and may not have been compared to the same genom
-e scaffold or software."
+        echo "Filenames ($TREAT and $CONTROL) do not have the same root names and may not have been compared to the same genome scaffold or software."
         exit 1
     else
 	# incorporate the time into the filename
 	TMPID=`date +%N`
-        TAGT=$IN1-$TMPID-$ROOT1
-	TAGC=$IN2-$TMPID-$ROOT2
+	echo "Random number added to output file names is: $TMPID"
+        TAGT=$IN1-$NREADS-$TMPID-$ROOT1
+	TAGC=$IN2-$NREADS-$TMPID-$ROOT2
     fi
 
 
@@ -96,8 +110,8 @@ macs2 randsample -f "SAM" -t $CONTROL -n $NREADS --outdir $IN1-MACS2-subsample -
 # run through basic MACS2 pipeline
 macs2 callpeak -t $IN1-MACS2-subsample/$TAGT-MACS2-subsample.bed -c $IN1-MACS2-subsample/$TAGC-MACS2-subsample.bed --outdir $IN1-MACS2-subsample -n $TAGT-MACS2-subsample -g 1.2e7 --bw=350 --keep-dup="auto" --nomodel -B
 
-if [ ! -f ~/Pipeline/Bedgraph2VariableStepWiggle_v2.py ]; then
-    echo "Cannot find Bedgraph2VariableStepWiggle_v2.py. Should be in ~/Pipeline/"
+if [ ! -f ~/Pipeline/Bedgraph2VariableStepWiggle.py ]; then
+    echo "Cannot find Bedgraph2VariableStepWiggle.py. Should be in ~/Pipeline/"
     exit 1
 fi
 
@@ -107,24 +121,25 @@ cd $IN1-MACS2-subsample
 rm $TAGT-MACS2-subsample.bed
 rm $TAGC-MACS2-subsample.bed
 
-python ~/Pipeline/Bedgraph2VariableStepWiggle_v2.py -b $TAGT-MACS2-subsample_control_lambda.bdg
-python ~/Pipeline/Bedgraph2VariableStepWiggle_v2.py -b $TAGT-MACS2-subsample_treat_pileup.bdg
+python ~/Pipeline/Bedgraph2VariableStepWiggle.py -b $TAGT-MACS2-subsample_control_lambda.bdg
+python ~/Pipeline/Bedgraph2VariableStepWiggle.py -b $TAGT-MACS2-subsample_treat_pileup.bdg
 
 rm $TAGT*MACS2-subsample*.bdg
 
-if [ ! -f ~/Pipeline/normalizewig_batch.R ]; then
-    echo "Cannot find normalizewig_batch.R. Should be in ~/Pipeline/"
+if [ ! -f ~/Pipeline/NormalizeWiggle.R ]; then
+    echo "Cannot find NormalizeWiggle.R. Should be in ~/Pipeline/"
     exit 1
 fi
 # normalize wiggle files
-R CMD BATCH "--args $TAGT-MACS2-subsample_control_lambda $TAGT-MACS2-subsample_treat_pileup" ~/Pipeline/normalizewig_batch.R
+R CMD BATCH "--args $TAGT-MACS2-subsample_treat_pileup $TAGT-MACS2-subsample_control_lambda" ~/Pipeline/NormalizeWiggle.R
 
 cd $STDIR
-mv $IN1-MACS2-subsample/normalizewig_batch.Rout $IN1-MACS2-subsample/$TAGT-MACS2-subsample_normalizewig_batch.Rout
+mv $IN1-MACS2-subsample/NormalizeWiggle.Rout $IN1-MACS2-subsample/$TAGT-MACS2-subsample_NormalizeWiggle.Rout
 gzip $IN1-MACS2-subsample/*/*.wig
 
 # ending loop here
 done
+
 
 exit 0;
 
