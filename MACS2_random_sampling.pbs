@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l nodes=1:ppn=2,walltime=01:00:00
+#PBS -l nodes=1:ppn=3,walltime=01:30:00
 #PBS -N MACS2_random_sampling
 #PBS -M ${USER}@nyu.edu
 #PBS -m abe
@@ -110,6 +110,8 @@ macs2 randsample -f "SAM" -t $CONTROL -n $NREADS --outdir $IN1-MACS2-subsample -
 # run through basic MACS2 pipeline
 macs2 callpeak -t $IN1-MACS2-subsample/$TAGT-MACS2-subsample.bed -c $IN1-MACS2-subsample/$TAGC-MACS2-subsample.bed --outdir $IN1-MACS2-subsample -n $TAGT-MACS2-subsample -g 1.2e7 --bw=350 --keep-dup="auto" --nomodel -B
 
+macs2 callpeak -t $IN1-MACS2-subsample/$TAGT-MACS2-subsample.bed -c $IN1-MACS2-subsample/$TAGC-MACS2-subsample.bed --outdir $IN1-MACS2-subsample -n $TAGT-MACS2-subsample -g 1.2e7 --bw=350 --keep-dup="auto" --nomodel --broad
+
 if [ ! -f ~/Pipeline/Bedgraph2VariableStepWiggle.py ]; then
     echo "Cannot find Bedgraph2VariableStepWiggle.py. Should be in ~/Pipeline/"
     exit 1
@@ -135,7 +137,7 @@ R CMD BATCH "--args $TAGT-MACS2-subsample_treat_pileup $TAGT-MACS2-subsample_con
 
 cd $STDIR
 mv $IN1-MACS2-subsample/NormalizeWiggle.Rout $IN1-MACS2-subsample/$TAGT-MACS2-subsample_NormalizeWiggle.Rout
-gzip $IN1-MACS2-subsample/*/*.wig
+gzip $IN1-MACS2-subsample/$TAGT*/*.wig
 
 # ending loop here
 done

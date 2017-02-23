@@ -309,7 +309,7 @@ fi
     if [ -e $IN-MACS2/${TAGT}_MACS2_treat_pileup.bdg ]; then
 	echo "already created necessary bedgraph in MACS2"
     else
-	macs2 callpeak -t $TREAT -c $CONTROL -n $TAGT_MACS2 --outdir $IN-MACS2 -g 1.2e7 --bw=350 --keep-dup="auto" -B --nomodel
+	macs2 callpeak -t $TREAT -c $CONTROL -n ${TAGT}_MACS2 --outdir $IN-MACS2 -g 1.2e7 --bw=350 --keep-dup="auto" -B --nomodel
     fi
 
 if [ ! -f ~/Pipeline/Bedgraph2VariableStepWiggle.py ]; then
@@ -517,9 +517,9 @@ fi
 	IN=$IN1
     fi
 
-    macs2 callpeak -t $TREAT -c $CONTROL -n $NAME --outdir $IN-MACS2 -g 1.2e7 --bw=350 --keep-dup="auto" --no-model
+    macs2 callpeak -t $TREAT -c $CONTROL -n $NAME --outdir $IN-MACS2 -g 1.2e7 --bw=350 --keep-dup="auto" --nomodel
 
-    macs2 callpeak -t $TREAT -c $CONTROL -n $NAME --outdir $IN-MACS2 -g 1.2e7 --bw=350 --keep-dup="auto" --no-model --broad
+    macs2 callpeak -t $TREAT -c $CONTROL -n $NAME --outdir $IN-MACS2 -g 1.2e7 --bw=350 --keep-dup="auto" --nomodel --broad
 
     echo "complete"
     date
