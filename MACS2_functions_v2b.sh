@@ -134,12 +134,12 @@ function create_bedgraph {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $INPUT1 == */* ]]; then
+if [[ $TREAT == */* ]]; then
     RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $INPUT2 == */* ]]; then
+if [[ $CONTROL == */* ]]; then
     RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
@@ -262,12 +262,12 @@ function create_bedgraph_nomodel {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $INPUT1 == */* ]]; then
+if [[ $TREAT == */* ]]; then
     RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $INPUT2 == */* ]]; then
+if [[ $CONTROL == */* ]]; then
     RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
@@ -377,12 +377,12 @@ function peak_call {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $INPUT1 == */* ]]; then
+if [[ $TREAT == */* ]]; then
     RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $INPUT2 == */* ]]; then
+if [[ $CONTROL == */* ]]; then
     RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
@@ -469,12 +469,12 @@ function peak_call_nomodel {
 ## Tagname should be specific to a specific library
 ## Rootname must begin with -S and should be identical between files
 ## Files must be sam or bam files
-if [[ $INPUT1 == */* ]]; then
+if [[ $TREAT == */* ]]; then
     RE1='.*/(.+)-(S.+).(sam|bam)'
 else
     RE1='(.+)-(S.+).(sam|bam)'
 fi
-if [[ $INPUT2 == */* ]]; then
+if [[ $CONTROL == */* ]]; then
     RE2='.*/(.+)-(S.+).(sam|bam)'
 else
     RE2='(.+)-(S.+).(sam|bam)'
