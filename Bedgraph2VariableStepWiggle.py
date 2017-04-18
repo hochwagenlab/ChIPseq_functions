@@ -2,8 +2,8 @@
 Name: Bedgraph2VariableStepWiggle.py
 Created by: Tovah Markowitz
 Date: 4/11/16
-Update: 4/20/16
-Change: No longer creates all chromosome file, also exits if output folder already exists
+Update: 4/13/17 to work with python3 and make all chromosome file
+Update: 4/18/17 to only make all chromosome file if more than one chromosome is included
 
 Note: currently only works with span=1
 Key detail 1: Bedgraphs use a 0-based coordinate system, while wiggle files use a 1-based coordinate system.
@@ -36,10 +36,10 @@ def read_bedgraph(bedgraph):
     bedD = defaultdict(list)
     for i in bedG:
         if len(i) != 4:
-            print "Some rows in this bedgraph are not complete. Cannot create a wiggle file.\n"
+            print( "Some rows in this bedgraph are not complete. Cannot create a wiggle file.\n" )
             exit()
         else:
-            bedD[i[0]].append( map(float, i[1:]) )
+            bedD[i[0]].append( list(map(float, i[1:])) )
 
     # step 3: for each chromosome do numeric sort by start
     for key in bedD.keys():
@@ -59,13 +59,12 @@ def create_variable_wiggle(bedgraph, bedD):
         os.chdir(filename)
 
     # if bedgraph file includes SPMR, it means it is from MACS2 with SPMR analysis
-    if filename.find("SPMR") != -1:
-        dataSource = "Extended tag pileup from MACS v2.1.0 with SPMR normalization for every 1 bp"
+    if filename.find("SPMR_FE") != -1:
+        dataSource = "Extended tag pileup from MACS2 with FE and SPMR normalization for every 1 bp"
+    elif filename.find("SPMR") != -1:
+        dataSource = "Extended tag pileup from MACS2 with SPMR normalization for every 1 bp"
     else:
         dataSource = filename
-    # create all chromosome file if it doesn't exist and empty if it does
-#    g = open( filename + "_all.wig", 'w')
-#    g.close()
         
     # step 2: determine chromosome naming system
     # chromosome list for SK1 and SacCer3 in chromosome number order
@@ -74,17 +73,22 @@ def create_variable_wiggle(bedgraph, bedD):
     SacCer3 = ( "chrI", "chrII", "chrIII", "chrIV", "chrV", "chrVI", "chrVII", "chrVIII",
                 "chrIX", "chrX", "chrXI", "chrXII", "chrXIII", "chrXIV", "chrXV", "chrXVI" )
     # use first key as method to determine which genome data was mapped to
-    if bedD.keys()[0] in SK1:
+    if list(bedD.keys())[0] in SK1:
         chromSet = SK1
-    elif bedD.keys()[0] in SacCer3:
+    elif list(bedD.keys())[0] in SacCer3:
         chromSet = SacCer3
     else:
-        print "Do not recognize chromosome names.\n"
+        print( "Do not recognize chromosome names.\n" )
         sys.exit()
+
+    # create all chromosome file if it doesn't exist and empty if it does (only if more than one chromosome)
+    if ( len(a) > 1 ):
+        g = open( filename + "_all.wig", 'w')
+        g.close()
 
     # step 3: for each chromosome make header, do calculations, and write to file
     for chrName in chromSet:
-        print datetime.now().ctime()
+        print( datetime.now().ctime() )
         # create header
         header = ( "track type=wiggle_0 name=" + filename + "_" + chrName + " description=" + dataSource +
                    "\nvariableStep chrom=" + chrName + " span=1\n" )
@@ -114,11 +118,11 @@ def create_variable_wiggle(bedgraph, bedD):
             f.close()
             
         # write to wig file for all chromosomes
- #       g = open( filename + "_all.wig", 'a')
- #       g.write( header )
- #       g.write( '\n'.join(out) )
- #       g.write( '\n' )
- #       g.close()
+        g = open( filename + "_all.wig", 'a')
+        g.write( header )
+        g.write( '\n'.join(out) )
+        g.write( '\n' )
+        g.close()
 
     os.chdir(location)
 
@@ -131,6 +135,7 @@ It is NOT designed to work with bedgraphs with overlapping fragments.
 Creates wiggle files for each individual chromosome with information.
 Uses input file name to determine output file names.
 Note: this function can currently only handle span=1.
+Note: this function is designed to work with python3.
 """
 
 # parse object for managing input options
