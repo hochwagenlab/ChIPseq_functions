@@ -82,7 +82,7 @@ def create_variable_wiggle(bedgraph, bedD):
         sys.exit()
 
     # create all chromosome file if it doesn't exist and empty if it does (only if more than one chromosome)
-    if ( len(a) > 1 ):
+    if ( len(bedD) > 1 ):
         g = open( filename + "_all.wig", 'w')
         g.close()
 
