@@ -117,12 +117,13 @@ def create_variable_wiggle(bedgraph, bedD):
             f.write( '\n'.join(out) )
             f.close()
             
+        if ( len(bedD) > 1 ):
         # write to wig file for all chromosomes
-        g = open( filename + "_all.wig", 'a')
-        g.write( header )
-        g.write( '\n'.join(out) )
-        g.write( '\n' )
-        g.close()
+            g = open( filename + "_all.wig", 'a')
+            g.write( header )
+            g.write( '\n'.join(out) )
+            g.write( '\n' )
+            g.close()
 
     os.chdir(location)
 
