@@ -55,8 +55,9 @@ def create_variable_wiggle(bedgraph, bedD):
     if os.path.isdir(filename):
         exit()    
     else:
-        os.mkdir(filename)
-        os.chdir(filename)
+        if ( len(bedD) > 1 ):
+            os.mkdir(filename)
+            os.chdir(filename)
 
     # if bedgraph file includes SPMR, it means it is from MACS2 with SPMR analysis
     if filename.find("SPMR_FE") != -1:
@@ -81,11 +82,6 @@ def create_variable_wiggle(bedgraph, bedD):
         print( "Do not recognize chromosome names.\n" )
         sys.exit()
 
-    # create all chromosome file if it doesn't exist and empty if it does (only if more than one chromosome)
-    if ( len(bedD) > 1 ):
-        g = open( filename + "_all.wig", 'w')
-        g.close()
-
     # step 3: for each chromosome make header, do calculations, and write to file
     for chrName in chromSet:
         print( datetime.now().ctime() )
@@ -95,20 +91,21 @@ def create_variable_wiggle(bedgraph, bedD):
 
         out = [ ]
         # for each row in bedgraph for individual chromosome
-        for row in range( len( bedD[chrName] ) ):
-            # ensure that end of previous row is not bigger than start of current row or trim start position of row
-            if row != 0:
-                if bedD[chrName][row][0] < bedD[chrName][row-1][1]:
-                    print ( "Warning: Overlaps begin at " + chrName + ":" + str( int( bedD[chrName][row][0] ) ) +
-                            "-" + str( int( bedD[chrName][row][1] ) ) + " ... Trimming row\n" )
-                    bedD[chrName][row][0] = bedD[chrName][row-1][1]
-            # skip rows with zero as score
-            if bedD[chrName][row][2] != 0:
-            # expand positions and convert to wiggle numbering system and add score for each position
-                positions = range( int( bedD[chrName][row][0] ) + 1, int( bedD[chrName][row][1] ) + 1 )
-                tmp = "\n".join( [ str(position) + "\t" + str( bedD[chrName][row][2] ) for position in positions ] )
-                out.append(tmp)
-                
+        if chrName in bedD.keys():
+            for row in range( len( bedD[chrName] ) ):
+                # ensure that end of previous row is not bigger than start of current row or trim start position of row
+                if row != 0:
+                    if bedD[chrName][row][0] < bedD[chrName][row-1][1]:
+                        print ( "Warning: Overlaps begin at " + chrName + ":" + str( int( bedD[chrName][row][0] ) ) +
+                                "-" + str( int( bedD[chrName][row][1] ) ) + " ... Trimming row\n" )
+                        bedD[chrName][row][0] = bedD[chrName][row-1][1]
+                    # skip rows with zero as score
+                    if bedD[chrName][row][2] != 0:
+                        # expand positions and convert to wiggle numbering system and add score for each position
+                        positions = range( int( bedD[chrName][row][0] ) + 1, int( bedD[chrName][row][1] ) + 1 )
+                        tmp = "\n".join( [ str(position) + "\t" + str( bedD[chrName][row][2] ) for position in positions ] )
+                        out.append(tmp)
+                        
         # to only print out files for chromosomes with information
         if ( len(out) != 0 ):
             # write wig file for individual chromosome
@@ -116,7 +113,7 @@ def create_variable_wiggle(bedgraph, bedD):
             f.write( header )
             f.write( '\n'.join(out) )
             f.close()
-            
+
         if ( len(bedD) > 1 ):
         # write to wig file for all chromosomes
             g = open( filename + "_all.wig", 'a')
