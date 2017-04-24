@@ -145,6 +145,7 @@ else
 	    fi
 	fi
     fi
+    gzip $M2FILE*.bdg
 fi
 
 echo "complete"
