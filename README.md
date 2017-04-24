@@ -1,4 +1,5 @@
-# README_v3
+# README
+# ChIP-seq Pipeline version 3
 
 ## PREPARATION
 1. Move entire folder into your home on prince (keep folder name as  
