@@ -16,19 +16,22 @@
 Example 1: Start with input file A.fastq and ChIP file B.fastq, map to SacCer3, 
 and create wiggle files and both narrow and broad peak files 
 (will also create wiggle plot of the rDNA)
-```sbatch --export INPUT=A.fastq,CHIP=B.fastq,GEN="SacCer3",TAGI="A",TAGC="B",PEAK="BOTH" \ 
+```Bash
+sbatch --export INPUT=A.fastq,CHIP=B.fastq,GEN="SacCer3",TAGI="A",TAGC="B",PEAK="BOTH" \ 
 ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch
 ```
 
 Example 2: Get broad peak files for replicate input files A_1.sam and A_2.sam, and
 ChIP files B_1.sam and B_2.sam
-```sbatch --export INPUT="A_1.sam A_2.sam",CHIP="B_1.sam B_2.sam",REP="B",FLMKR="1-3",PEAK="BROAD",WIG="F" \
+```Bash
+sbatch --export INPUT="A_1.sam A_2.sam",CHIP="B_1.sam B_2.sam",REP="B",FLMKR="1-3",PEAK="BROAD",WIG="F" \
 ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch
 ```
 
 Example 3: Get normalized wiggle files (and narrow peaks) with ChIP file A1.sam, input file A2.sam,
 mock ChIP file B1.sam, and mock input file B2.sam
-```sbatch --export INPUT=A2.sam,CHIP=A1.sam,INCON=B2.sam,CHCON=B1.sam,FLMKR="1-2" \
+```Bash
+sbatch --export INPUT=A2.sam,CHIP=A1.sam,INCON=B2.sam,CHCON=B1.sam,FLMKR="1-2" \
 ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch
 ```
 
