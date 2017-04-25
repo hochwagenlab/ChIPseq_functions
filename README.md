@@ -71,6 +71,9 @@ See MACS2 FOLDER with the following changes:
   haven't figured out how to remove yet. Both should be essentially  
   empty at all times. One will go to $FLDR and the other will go to the  
   working directory where you submit the job.
+  	  - I have changed one of these files to ChIPseq_closing_$JOBID.sbatch   
+	  for troubleshooting purposes. It will now go to /scratch/$USER  
+	  instead of $FOLDER
 - The pipeline will initially make a /scratch/$USER/MACS2_pipeline_$CHIP.txt.  
   If none of the bowtie or macs2 jobs are initiated, this file will include  
   all necessary error messages.
@@ -78,6 +81,18 @@ See MACS2 FOLDER with the following changes:
   /scratch/$USER. These will eventually be consolidated along with  
   the above .txt into ChIPseq_Pipeline_$JOBID1.out where $JOBID1 is the  
   ID of the first job initiated from within the job.
+
+## FOR TROUBLESHOOTING
+If you get a job that has issues running, it may not consolidate all 
+output files into a single document. If this is the case, follow these 
+rules to begin troubleshooting:
+1) Check the file /scratch/$USER/MACS2_pipeline_$CHIP.txt. It will tell   
+   you all of the jobs that ran for this pipeline run as a colon-separated list.
+2) For each job, just type: less /scratch/$USER/*[insert JobID here]* to   
+   see what might have gone wrong. These may be called:  
+       - Bowtie_$JOBID.out  
+       - MACS2_FE_$JOBID.out  
+       - ChIPseq_closing_$JOBID.out  
 
 ## NEW FEATURES
 - Bowtie_B3.sbatch automatically checks for a file in both zipped and  

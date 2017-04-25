@@ -6,6 +6,7 @@
 #SBATCH --mail-type=END
 #SBATCH --mail-user=tem298@hpc.nyu.edu
 #SBATCH --job-name=ChIPseq_closing
+#SBATCH --output=/scratch/%u/%x_%j.out
 
 module purge
 
