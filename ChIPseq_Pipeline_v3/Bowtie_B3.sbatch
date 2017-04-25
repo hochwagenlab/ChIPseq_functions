@@ -185,6 +185,7 @@ else
 	exit 1
 fi
 
+cd $DIR
 test -f $FASTQ.gz || gzip $FASTQ
 
 echo "complete"
