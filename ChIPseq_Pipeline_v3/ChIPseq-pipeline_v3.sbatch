@@ -66,8 +66,8 @@ module purge
 #################################################################################################################               
 
 # check for shell functions
-if [ -f ~/ChIPseq_Pipeline/ChIPseq_functions_prince.sh ]; then
-    source ~/ChIPseq_Pipeline/ChIPseq_functions_prince.sh
+if [ -f ~/ChIPseq_Pipeline_v3/ChIPseq_functions_prince.sh ]; then
+    source ~/ChIPseq_Pipeline_v3/ChIPseq_functions_prince.sh
 else
     echo "Cannot find MACS2_functions_prince.sh"
     exit 3
@@ -155,7 +155,7 @@ if [[ $GEN != "" ]]; then
 
 	if [[ $jidBs != "" ]]; then jidBs+=":"; fi
 	jidBs+=$(sbatch --export FLDR=$FLDR,FASTQIN=$FQIN,TAG=$TAGIN,GENOME=$GEN \
-	    ~/ChIPseq_Pipeline/Bowtie_B3.sbatch | awk '{print $NF}')
+	    ~/ChIPseq_Pipeline_v3/Bowtie_B3.sbatch | awk '{print $NF}')
 
 	#for rDNA mapping
 	if [[ " ${fqCount[@]} " == " 1 2 " || \
@@ -164,11 +164,11 @@ if [[ $GEN != "" ]]; then
 	    if [[ $GEN == "SacCer3" ]]; then
 		jidRs+=$(sbatch --dependency=afterany:$jidBs \
 		    --export FLDR=$FLDR,FASTQIN=$FQIN,TAG=$TAGIN,GENOME="SacCer3_rDNA" \
-		    ~/ChIPseq_Pipeline/Bowtie_B3.sbatch | awk '{print $NF}')
+		    ~/ChIPseq_Pipeline_v3/Bowtie_B3.sbatch | awk '{print $NF}')
 	    else
 		jidRs+=$(sbatch --dependency=afterany:$jidBs \
 		    --export FLDR=$FLDR,FASTQIN=$FQIN,TAG=$TAGIN,GENOME="SK1_rDNA" \
-		    ~/ChIPseq_Pipeline/Bowtie_B3.sbatch | awk '{print $NF}')
+		    ~/ChIPseq_Pipeline_v3/Bowtie_B3.sbatch | awk '{print $NF}')
 	    fi
 	fi
     done
@@ -250,11 +250,11 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs"; fi
 	    jids+=$(sbatch $DEPB \
 		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATA",CONTROL="$CONTROLA",FOLDER=$FOLDER,M2FILE=$M2FILE1 \
-		~/ChIPseq_Pipeline/MACS2_FE_W3.sbatch | awk '{print $NF}')
+		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 	    jids+=":"
 	    jids+=$(sbatch $DEPB \
 		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATB",CONTROL="$CONTROLB",FOLDER=$FOLDER,M2FILE=$M2FILE2 \
-		~/ChIPseq_Pipeline/MACS2_FE_W3.sbatch | awk '{print $NF}')
+		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 
 	fi
     elif [[ $INCON != "" || $CHCON != "" ]]; then
@@ -295,7 +295,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs"; fi
 	    jids+=$(sbatch $DEPB \
 		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREAT",CONTROL="$CONTROL",FOLDER=$FOLDER,M2FILE=$M2FILE \
-		~/ChIPseq_Pipeline/MACS2_FE_W3.sbatch | awk '{print $NF}')
+		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 	fi
     fi
 fi
@@ -314,11 +314,11 @@ if [[ $GENROOT2 != "" ]]; then
 	if [[ $jidRs != "" ]]; then DEPR="--dependency=afterok:$jidRs"; fi
 	jids+=$(sbatch $DEPR \
 	    --export FLDR=$FLDR,WIG="RDNA",PEAK=$PEAK,TREAT="$TREAT1R",CONTROL="$TREAT2R",FOLDER=$FOLDER,M2FILE=$M2FILE1 \
-	    ~/ChIPseq_Pipeline/MACS2_FE_W3.sbatch | awk '{print $NF}')
+	    ~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 	jids+=":"
 	jids+=$(sbatch $DEPR \
 	    --export FLDR=$FLDR,WIG="RDNA",PEAK=$PEAK,TREAT="$CONTROL1R",CONTROL="$CONTROL2R",FOLDER=$FOLDER,M2FILE=$M2FILE2 \
-	    ~/ChIPseq_Pipeline/MACS2_FE_W3.sbatch | awk '{print $NF}')
+	    ~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
     else
 	if [[ $REP == "" ]]; then
 	    define_MACS2_filenames $TAGC $ROOTF $ROOTFR "NORMAL" $FLMKR
@@ -329,7 +329,7 @@ if [[ $GENROOT2 != "" ]]; then
 	if [[ $jidRs != "" ]]; then DEPR="--dependency=afterok:$jidRs"; fi
 	jids+=$(sbatch $DEPR \
 	    --export FLDR=$FLDR,WIG="RDNA",PEAK=$PEAK,TREAT="$TREAT1R",CONTROL="$CONTROL1R",FOLDER=$FOLDER,M2FILE=$M2FILE \
-	    ~/ChIPseq_Pipeline/MACS2_FE_W3.sbatch | awk '{print $NF}')
+	    ~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
     fi
 fi
 

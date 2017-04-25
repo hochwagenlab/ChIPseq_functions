@@ -20,7 +20,7 @@ function run_closing {
     if [[ $JIDS != "" ]]; then
 	sbatch --dependency=afterany:$JIDS \
 	    --export IDS=$JIDS,OUT=$OUT \
-            ~/ChIPseq_Pipeline/ChIPseq_closing.sbatch
+            ~/ChIPseq_Pipeline_v3/ChIPseq_closing.sbatch
     fi
 }
 

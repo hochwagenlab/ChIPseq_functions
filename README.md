@@ -3,7 +3,7 @@
 
 ## PREPARATION
 1. Move entire folder into your home on prince (keep folder name as  
-   "ChIPseq-Pipeline")
+   "ChIPseq_Pipeline_v3")
 2. Move the 3 fasta files into a folder called "Library" in your home on prince
 3. Open each sbatch script and adjust the email address
 4. Start running jobs (sbatch ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch)
@@ -19,21 +19,21 @@ and create wiggle files and both narrow and broad peak files
 (will also create wiggle plot of the rDNA)
 ```Bash
 sbatch --export INPUT=A.fastq,CHIP=B.fastq,GEN="SacCer3",TAGI="A",TAGC="B",PEAK="BOTH" \ 
-~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch
+~/ChIPseq_Pipeline_v3/ChIPseq-pipeline_v3.sbatch
 ```
 
 Example 2: Get broad peak files for replicate input files A_1.sam and A_2.sam, and
 ChIP files B_1.sam and B_2.sam
 ```Bash
 sbatch --export INPUT="A_1.sam A_2.sam",CHIP="B_1.sam B_2.sam",REP="B",FLMKR="1-3",PEAK="BROAD",WIG="F" \
-~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch
+~/ChIPseq_Pipeline_v3/ChIPseq-pipeline_v3.sbatch
 ```
 
 Example 3: Get normalized wiggle files (and narrow peaks) with ChIP file A1.sam, input file A2.sam,
 mock ChIP file B1.sam, and mock input file B2.sam
 ```Bash
 sbatch --export INPUT=A2.sam,CHIP=A1.sam,INCON=B2.sam,CHCON=B1.sam,FLMKR="1-2" \
-~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch
+~/ChIPseq_Pipeline_v3/ChIPseq-pipeline_v3.sbatch
 ```
 
 ## OUTPUT FILE NAMES

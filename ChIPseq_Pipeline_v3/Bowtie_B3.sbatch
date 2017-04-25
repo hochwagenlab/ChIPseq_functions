@@ -83,19 +83,19 @@ if [[ $GENOME == "SK1" ]]; then
       echo "Sam file Bowtie/$TAG-$ROOT.sam already exists. Continuing."
    else
       # check if database files exist
-      if [ ! -f ~/Library/sk1_MvO_V1.1.ebwt ]; then
+      if [ ! -f ~/Library/Bowtie1_2/sk1_MvO_V1.1.ebwt ]; then
 	  if [ ! -f ~/Library/sk1_MvO_V1.fasta ]; then
 	      echo "Put sk1_MvO_V1.fasta in ~/Library/ to align files to SK1"
 	      exit 1
 	  else
-	      cd ~/Library
-	      bowtie-build -f sk1_MvO_V1.fasta sk1_MvO_V1
+	      cd ~/Library/Bowtie1_2
+	      bowtie-build -f ../sk1_MvO_V1.fasta sk1_MvO_V1
 	      cd $DIR
 	  fi
       fi
       bowtie -p 8 -q -m 1 -v 0 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
-	  ~/Library/sk1_MvO_V1 $FASTQ Bowtie/$TAG-$ROOT.sam
+	  ~/Library/Bowtie1_2/sk1_MvO_V1 $FASTQ Bowtie/$TAG-$ROOT.sam
       gzip Unaligned/$TAG*.fastq
    fi
 
@@ -109,19 +109,19 @@ elif [[ $GENOME == "SacCer3" ]]; then
       echo "Sam file Bowtie/$TAG-$ROOT.sam already exists. Continuing."
    else
       # check if database files exist 
-      if [ ! -f ~/Library/SacCer3.1.ebwt ]; then
+      if [ ! -f ~/Library/Bowtie1_2/SacCer3.1.ebwt ]; then
 	  if [ ! -f ~/Library/S288C_R64.fasta ]; then
 	      echo "Put S288C_R64.fasta into ~/Library/ to align files to SacCer3"
 	      exit 1
 	  else
-	      cd ~/Library
-	      bowtie-build -f S288C_R64.fasta SacCer3
+	      cd ~/Library/Bowtie1_2
+	      bowtie-build -f ../S288C_R64.fasta SacCer3
 	      cd $DIR
 	  fi
       fi
       bowtie -p 8 -q -m 1 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
-	  ~/Library/SacCer3 $FASTQ Bowtie/$TAG-$ROOT.sam
+	  ~/Library/Bowtie1_2/SacCer3 $FASTQ Bowtie/$TAG-$ROOT.sam
       gzip Unaligned/$TAG*.fastq
    fi
 
@@ -143,36 +143,36 @@ elif [[ $GENOME =~ "rDNA" ]]; then
       echo "Sam file rDNA/$TAG-$ROOT.sam already exists. Continuing."
    else
       # check if database files exist 
-      if [ ! -f ~/Library/rDNA_SK1.1.ebwt ]; then
+      if [ ! -f ~/Library/Bowtie1_2/rDNA_SK1.1.ebwt ]; then
 	  if [ ! -f ~/Library/SK1_rDNA_50bp_overhang.fasta ]; then
 	      echo "Put SK1_rDNA_50bp_overhang.fasta into ~/Library/ to align rDNA files"
 	      exit 1
 	  else
-	      cd ~/Library
-	      bowtie-build -f SK1_rDNA_50bp_overhang.fasta rDNA_SK1
+	      cd ~/Library/Bowtie1_2
+	      bowtie-build -f ../SK1_rDNA_50bp_overhang.fasta rDNA_SK1
 	      cd $DIR
 	  fi
       fi
       # align to a single rDNA repeat 
       # (note: SK1_rDNA_50bp_overhang.fastA has 50bp of overlapping sequence 
       # so multiple mappings are allowed)
-      bowtie -p 8 -a -q -S ~/Library/rDNA_SK1 $FASTQ rDNA/$TAG-rDNA-raw.sam
+      bowtie -p 8 -a -q -S ~/Library/Bowtie1_2/rDNA_SK1 $FASTQ rDNA/$TAG-rDNA-raw.sam
       
       cd rDNA
       # to limit memory costs
       samtools view -F 4 -h $TAG-rDNA-raw.sam > $TAG-rDNA-raw2.sam
       rm $TAG-rDNA-raw.sam
 
-      if [ ! -f ~/ChIPseq_Pipeline/Position_shift_SAM.pl ]; then
-	  echo "Cannot find Position_shift_SAM.pl. Should be in ~/ChIPseq_Pipeline/"
+      if [ ! -f ~/ChIPseq_Pipeline_v3/Position_shift_SAM.pl ]; then
+	  echo "Cannot find Position_shift_SAM.pl. Should be in ~/ChIPseq_Pipeline_v3/"
 	  exit 1
       fi
       # put sam outputs on chrXII
       if [[ $GENOME =~ "SacCer3" ]]; then
-	  perl ~/ChIPseq_Pipeline/Position_shift_SAM.pl -i $TAG-rDNA-raw2.sam \
+	  perl ~/ChIPseq_Pipeline_v3/Position_shift_SAM.pl -i $TAG-rDNA-raw2.sam \
 	      -c chrXII -p 451418 -o $TAG-$ROOT.sam
       elif [[ $GENOME =~ "SK1" ]]; then
-	  perl ~/ChIPseq_Pipeline/Position_shift_SAM.pl -i $TAG-rDNA-raw2.sam \
+	  perl ~/ChIPseq_Pipeline_v3/Position_shift_SAM.pl -i $TAG-rDNA-raw2.sam \
 	      -c chr12 -p 433028 -o $TAG-$ROOT.sam
       fi
 

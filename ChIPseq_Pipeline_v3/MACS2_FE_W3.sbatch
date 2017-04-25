@@ -125,16 +125,16 @@ else
 	-o ${M2FILE}_FE.bdg -m FE
 
     # convert bedgraphs created by MACS2 into wiggle files
-    if [ ! -f ~/ChIPseq_Pipeline/Bedgraph2VariableStepWiggle.py ]; then
+    if [ ! -f ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py ]; then
 	echo "Cannot find Bedgraph2VariableStepWiggle.py"
-	echo "This file should be located in ~/ChIPseq_Pipeline"
+	echo "This file should be located in ~/ChIPseq_Pipeline_v3"
 	exit 1
     else
 	if [ -d ${M2FILE}_FE ]; then
 	    echo "Already converted ${M2FILE}_FE.bdg into wiggle"
 	else
 	    echo "Converting ${M2FILE}_FE.bdg into wiggle"
-	    python3 ~/ChIPseq_Pipeline/Bedgraph2VariableStepWiggle.py \
+	    python3 ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py \
 		-b ${M2FILE}_FE.bdg
 	    
 	    cd $DIR/$FOLDER
