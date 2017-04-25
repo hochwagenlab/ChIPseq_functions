@@ -63,7 +63,7 @@ function assign_genroot {
 	      GENROOT2="SK1K-rDNA_B3"
             ;;
         SacCer3 ) GENROOT="SacCer3-2mis_B3"
-	          GENROOT2="SacCer3-2mis-rDNA_B3"
+	          GENROOT2="SacCer3-rDNA_B3"
             ;;
         * ) echo "Unknown genome listed." >> $OUT
             run_closing $OUT $JIDS
