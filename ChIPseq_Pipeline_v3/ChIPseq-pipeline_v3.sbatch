@@ -75,7 +75,14 @@ fi
 
 # TMPID should be the root of the ChIP file (without any periods)
 TMP=${CHIP##*/}
-TMPID=${TMP%%.*}
+TMPID1=${TMP%%.*}
+if [[ $TMPID =~ "*" ]]; then
+    IFS="*" read -ra TMPID <<< $TMPID1
+EOF
+else
+    TMPID=$TMPID1
+fi    
+
 OUT=/scratch/$USER/MACS2_pipeline_$TMPID.txt
 touch $OUT
 
