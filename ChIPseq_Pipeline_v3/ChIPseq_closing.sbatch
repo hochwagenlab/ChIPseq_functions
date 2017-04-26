@@ -20,20 +20,26 @@ IFS=":" read -ra ID_LIST <<< $IDS
 cd /scratch/$USER
 
 if [[ $TAGC != "" ]]; then
-    OUTNAME="${TAGC}_${ID_LIST[0]}.out"
+    OUTNAME="${TAGC}_${ID_LIST[0]}.output"
 else
-    OUTNAME="${TMPID}_${ID_LIST[0]}.out"
+    OUTNAME="${TMPID}_${ID_LIST[0]}.output"
 fi
 
 mv MACS2_pipeline_$TMPID.txt $OUTNAME
 
+echo "moving these files:" 
 for i in `echo "${ID_LIST[@]}"`;
 do
+    ls *$i*.out 
     cat *$i*.out >> $OUTNAME
     rm *$i*.out
 done
 
-mv ChIPseq_Pipeline_${ID_LIST[0]}.output ChIPseq_Pipeline_${ID_LIST[0]}.out
+if [[ $TAGC != "" ]]; then
+    mv ${TAGC}_${ID_LIST[0]}.output ${TAGC}_${ID_LIST[0]}.out
+else
+    mv ${TMPID}_${ID_LIST[0]}.output ${TMPID}_${ID_LIST[0]}.out
+fi
 
 
 
