@@ -81,7 +81,10 @@ See MACS2 FOLDER with the following changes:
   /scratch/$USER. These will eventually be consolidated along with  
   the above .txt into ChIPseq_Pipeline_$JOBID1.out where $JOBID1 is the  
   ID of the first job initiated from within the job.  
-     	- This output file has been changed to $CHIP_$JOBID1.out.
+     	- This output file has been changed to $TAGC_$JOBID1.out.  
+	  If you don't explicitly define $TAGC, it should be determined   
+	  within the pipeline. If $TAGC doesn't exist, the file should become   
+	  $CHIP_$JOBID1.out.
 
 ## FOR TROUBLESHOOTING
 If you get a job that has issues running, it may not consolidate all 
@@ -93,7 +96,7 @@ rules to begin troubleshooting:
    see what might have gone wrong. These may be called:  
        - Bowtie_$JOBID.out  
        - MACS2_FE_$JOBID.out  
-       - ChIPseq_closing_$JOBID.out  
+       - closing_ChIPseq_$JOBID.out  
 
 ## NEW FEATURES
 - Bowtie_B3.sbatch automatically checks for a file in both zipped and  
