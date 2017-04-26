@@ -73,6 +73,7 @@ fi
 
 test -d Bowtie || mkdir Bowtie
 test -d Unaligned || mkdir Unaligned
+test -d ~/Library/Bowtie1_2 || mkdir ~/Library/Bowtie1_2
 
 ########## SK1 ###########
 # outer if statement to check genome requested
