@@ -104,7 +104,7 @@ if [[ $GEN != "" ]]; then
 	echo "Error: spaces included for variable CHIP." >> $OUT
 	echo "Cannot have spaces and run Bowtie alignment for the same variable." >> $OUT
 	echo "If file has spaces, use rm_space_filename.py" >> $OUT
-	run_closing $OUT $jids
+	run_closing $TMPID $jids
 	exit 1
     fi
 
@@ -190,7 +190,7 @@ else
 	$INCON =~ .fastq|.fq || $CHCON =~ .fastq|.fq ]]; then
 	echo "Variable GEN is empty." >> $OUT
 	echo "Please include genome type to analyze FASTQ files." >> $OUT
-	run_closing $OUT $jids
+	run_closing $TMPID $jids
 	exit 1
     fi
 fi
@@ -213,7 +213,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
     if [[ $INCON != "" && $CHCON != "" ]]; then
 	if [[ $INPUT == "" || $CHIP == "" ]]; then
 	    echo "For MACS2 analysis, this pipeline requires an input and a ChIP file" >> $OUT
-	    run_closing $OUT $jids
+	    run_closing $TMPID $jids
 	    exit 1
 	else
 	    # where roundA is the ChIP vs ChIP normalization and roundB is the input vs input normalization
@@ -225,7 +225,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	    if [[ $FLMKR == "" ]]; then
 		    echo "For normalization against another ChIP sample," >> $OUT
 		    echo "FLMKR must be defined" >> $OUT
-		    run_closing $OUT $jids
+		    run_closing $TMPID $jids
 		    exit 1
 	    fi
 
@@ -241,7 +241,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 		else
 		    echo "Either CHIP or INPUT has multiple files." >> $OUT
 		    echo "REP required" >> $OUT
-		    run_closing $OUT $jids
+		    run_closing $TMPID $jids
 		    exit 1
 		fi    
 	    fi
@@ -261,7 +261,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	echo "For MACS2 analysis, this pipeline requires that" >> $OUT
 	echo "if you define a control ChIP file, " >> $OUT
 	echo "you must also include a control input file" >> $OUT
-	run_closing $OUT $jids
+	run_closing $TMPID $jids
 	exit 1
 
 ################ ChIP vs Input Normalization ###############3
@@ -269,7 +269,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
     else
 	if [[ $INPUT == "" || $CHIP == "" ]]; then
 	    echo "For MACS2 analysis, this pipeline requires an input and a ChIP file" >> $OUT
-	    run_closing $OUT $jids
+	    run_closing $TMPID $jids
 	    exit 1
 	else
 	    if [[ $TREAT1 != "" ]]; then TREAT=$TREAT1; else TREAT=$CHIP; fi
@@ -286,7 +286,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 		else
 		    echo "Either CHIP or INPUT has multiple files." >> $OUT
 		    echo "REP required" >> $OUT
-		    run_closing $OUT $jids
+		    run_closing $TMPID $jids
 		    exit 1
 		fi    
 	    fi
@@ -334,7 +334,7 @@ if [[ $GENROOT2 != "" ]]; then
 fi
 
 ################### CLOSING FUNCTION ################
-run_closing $OUT $jids
+run_closing $TMPID $jids
 
 echo "Job ids are: $jids" >> $OUT
 echo "" >> $OUT

@@ -15,6 +15,8 @@ module purge
 module load macs2/intel/2.1.1
 module load python3/intel/3.5.3
 
+echo "#####################################################"
+echo ""
 echo "Running: $SLURM_JOB_NAME"
 echo "JobID is: $SLURM_JOBID"
 echo ""

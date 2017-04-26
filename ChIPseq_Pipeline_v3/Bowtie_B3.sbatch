@@ -14,6 +14,8 @@ module load bowtie/gnu/1.2.0
 module load samtools/intel/1.3.1
 module load perl/intel/5.24.0
 
+echo "#############################################################"
+echo ""
 echo "Running: $SLURM_JOB_NAME"
 echo "JobID is: $SLURM_JOBID "
 
