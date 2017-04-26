@@ -70,7 +70,7 @@ See MACS2 FOLDER with the following changes:
 - The pipeline automatically makes two slurm_$JOBID.out files that I  
   haven't figured out how to remove yet. Both should be essentially  
   empty at all times. One will go to $FLDR and the other will go to the  
-  working directory where you submit the job.
+  working directory where you submit the job.  
   	  - I have changed one of these files to ChIPseq_closing_$JOBID.sbatch   
 	  for troubleshooting purposes. It will now go to /scratch/$USER  
 	  instead of $FOLDER
@@ -80,7 +80,7 @@ See MACS2 FOLDER with the following changes:
 - While running, the pipeline will create many .out files in  
   /scratch/$USER. These will eventually be consolidated along with  
   the above .txt into ChIPseq_Pipeline_$JOBID1.out where $JOBID1 is the  
-  ID of the first job initiated from within the job.
+  ID of the first job initiated from within the job.  
      	- This output file has been changed to $CHIP_$JOBID1.out.
 
 ## FOR TROUBLESHOOTING
