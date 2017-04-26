@@ -81,6 +81,7 @@ See MACS2 FOLDER with the following changes:
   /scratch/$USER. These will eventually be consolidated along with  
   the above .txt into ChIPseq_Pipeline_$JOBID1.out where $JOBID1 is the  
   ID of the first job initiated from within the job.
+     	- This output file has been changed to $CHIP_$JOBID1.out.
 
 ## FOR TROUBLESHOOTING
 If you get a job that has issues running, it may not consolidate all 
