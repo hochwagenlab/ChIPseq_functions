@@ -5,13 +5,13 @@
 #SBATCH --time=5:00
 #SBATCH --mail-type=END
 #SBATCH --mail-user=tem298@nyu.edu
-#SBATCH --job-name=ChIPseq_closing
+#SBATCH --job-name=closing_ChIPseq
 #SBATCH --output=/scratch/%u/%x_%j.out
 
 module purge
 
 # This function is designed to merge all of the error/output files into a single file
-# this function wants two variables: $IDS and $TMPID
+# this function wants three variables: $IDS, $TMPID, and $TAGC
 
 IFS=":" read -ra ID_LIST <<< $IDS
 
@@ -19,7 +19,11 @@ IFS=":" read -ra ID_LIST <<< $IDS
 
 cd /scratch/$USER
 
-OUTNAME="$TMPID_${ID_LIST[0]}.out"
+if [[ $TAGC != "" ]]; then
+    OUTNAME="${TAGC}_${ID_LIST[0]}.out"
+else
+    OUTNAME="${TMPID}_${ID_LIST[0]}.out"
+fi
 
 mv MACS2_pipeline_$TMPID.txt $OUTNAME
 

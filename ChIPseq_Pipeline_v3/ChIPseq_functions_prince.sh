@@ -16,10 +16,11 @@ function run_closing {
 # run sbatch script ChIPseq_closing.sbatch to organize error/output files
     TMPID=$1
     JIDS=$2
+    TAGC=$3
 
     if [[ $JIDS != "" ]]; then
 	sbatch --dependency=afterany:$JIDS \
-	    --export IDS=$JIDS,TMPID=$TMPID \
+	    --export IDS=$JIDS,TMPID=$TMPID,TAGC=$TAGC \
             ~/ChIPseq_Pipeline_v3/ChIPseq_closing.sbatch
     fi
 }
