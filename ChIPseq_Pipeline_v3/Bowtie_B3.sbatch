@@ -2,7 +2,7 @@
 #SBATCH --verbose
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=16GB
+#SBATCH --mem=20GB
 #SBATCH --time=0:30:00
 #SBATCH --job-name=Bowtie
 #SBATCH --mail-type=FAIL
