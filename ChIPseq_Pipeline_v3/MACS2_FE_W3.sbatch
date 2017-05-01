@@ -66,7 +66,7 @@ PEAK=$(echo $PEAK | tr '[:lower:]' '[:upper:]')
 
 GENSIZE=1.2e7
 
-if [[ $WIG =~ [Rr] ]]; then
+if [[ $WIG =~ ^[Rr] ]]; then
     DUP="all"
 else
     DUP="auto"
