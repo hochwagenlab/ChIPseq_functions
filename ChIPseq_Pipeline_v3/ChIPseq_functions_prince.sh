@@ -16,11 +16,11 @@ function run_closing {
 # run sbatch script ChIPseq_closing.sbatch to organize error/output files
     TMPID=$1
     JIDS=$2
-    TAGC=$3
+    TAGOUT=$3
 
     if [[ $JIDS != "" ]]; then
 	sbatch --dependency=afterany:$JIDS \
-	    --export IDS=$JIDS,TMPID=$TMPID,TAGC=$TAGC \
+	    --export IDS=$JIDS,TMPID=$TMPID,TAGOUT=$TAGOUT \
             ~/ChIPseq_Pipeline_v3/ChIPseq_closing.sbatch
     fi
 }
@@ -31,15 +31,16 @@ function run_closing {
 function check_fastq {
     # check input variables to determine if they are to be run through Bowtie
     # returns: FQTF as "TRUE/FALSE"
-    OUT=$1
-    POTFQ=$2
-    TAGN=$3
-    JIDS=$4
+    TMPID=$1
+    TAGOUT=$2
+    POTFQ=$3
+    TAGN=$4
+    JIDS=$5
 
     if [[ $POTFQ =~ .fastq|.fq ]]; then
 	if [[ $TAGN == "" ]]; then
 	    echo "$POTFQ was not given a tagname" >> $OUT
-	    run_closing $OUT $JIDS
+	    run_closing $TMPID $JIDS $TAGOUT
 	    exit 1
 	else
 	    FQTF="TRUE"
@@ -55,9 +56,10 @@ function check_fastq {
 function assign_genroot {
     # adjusting output names to fit with genome requested
     # returns: GENROOT and GENROOT2
-    OUT=$1
-    GEN=$2
-    JIDS=$3
+    TMPID=$1
+    TAGOUT=$2
+    GEN=$3
+    JIDS=$4
 
     case $GEN in
         SK1 ) GENROOT="SK1K-PM_B3"
@@ -67,7 +69,7 @@ function assign_genroot {
 	          GENROOT2="SacCer3-rDNA_B3"
             ;;
         * ) echo "Unknown genome listed." >> $OUT
-            run_closing $OUT $JIDS
+	    run_closing $TMPID $JIDS $TAGOUT
             exit 1
     esac
 }
@@ -76,9 +78,10 @@ function assign_genroot {
 ### FUNCTION4
 
 function parse_inCHIPname {
-    OUT=$1
-    TREATMENT1=$2
-    JIDS=$3
+    TMPID=$1
+    TAGOUT=$2
+    TREATMENT1=$3
+    JIDS=$4
 
     # if there are spaces in CHIP, it must be replicates
     # continue to parse first file for ROOT
@@ -97,6 +100,9 @@ function parse_inCHIPname {
     fi
     if [[ $TREATMENT =~ $RE ]]; then
         TAGC=${BASH_REMATCH[1]}
+	if [[ $TAGOUT != $REP ]]; then
+	    TAGOUT=$TAGC
+	fi
         GENROOT=${BASH_REMATCH[2]}
     else
         echo "Error: ChIP filename ($TREATMENT) is incorrect." >> $OUT
@@ -105,7 +111,7 @@ function parse_inCHIPname {
         echo "Correct pattern is (.+)-(S.+).(sam|bam)." >> $OUT
         echo "Make sure the file has one and only one -S." >> $OUT
         echo "Both relative and complete paths are accepted." >> $OUT
-        run_closing $OUT $JIDS
+        run_closing $TMPID $JIDS $TAGOUT
         exit 1
     fi
 }
