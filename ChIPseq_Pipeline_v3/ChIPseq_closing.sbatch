@@ -11,7 +11,7 @@
 module purge
 
 # This function is designed to merge all of the error/output files into a single file
-# this function wants three variables: $IDS, $TMPID, and $TAGC
+# this function wants three variables: $IDS, $TMPID, and $TAGOUT
 
 IFS=":" read -ra ID_LIST <<< $IDS
 
@@ -19,11 +19,7 @@ IFS=":" read -ra ID_LIST <<< $IDS
 
 cd /scratch/$USER
 
-if [[ $TAGC != "" ]]; then
-    OUTNAME="${TAGC}_${ID_LIST[0]}.output"
-else
-    OUTNAME="${TMPID}_${ID_LIST[0]}.output"
-fi
+OUTNAME="${TAGOUT}_${ID_LIST[0]}.output"
 
 mv MACS2_pipeline_$TMPID.txt $OUTNAME
 
@@ -35,11 +31,7 @@ do
     rm *$i*.out
 done
 
-if [[ $TAGC != "" ]]; then
-    mv ${TAGC}_${ID_LIST[0]}.output ${TAGC}_${ID_LIST[0]}.out
-else
-    mv ${TMPID}_${ID_LIST[0]}.output ${TMPID}_${ID_LIST[0]}.out
-fi
+mv ${TAGOUT}_${ID_LIST[0]}.output ${TAGOUT}_${ID_LIST[0]}.out
 
 
 
