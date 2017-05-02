@@ -263,7 +263,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	    fi
 
 	    if [[ $jids != "" ]]; then jids+=":"; fi
-	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs"; fi
+	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs --kill-on-invalid-dep=yes"; fi
 	    jids+=$(sbatch $DEPB \
 		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATA",CONTROL="$CONTROLA",FOLDER=$FOLDER,M2FILE=$M2FILE1 \
 		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
@@ -308,7 +308,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	    fi
 	    
 	    if [[ $jids != "" ]]; then jids+=":"; fi
-	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs"; fi
+	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs --kill-on-invalid-dep=yes"; fi
 	    jids+=$(sbatch $DEPB \
 		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREAT",CONTROL="$CONTROL",FOLDER=$FOLDER,M2FILE=$M2FILE \
 		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
@@ -327,7 +327,7 @@ if [[ $GENROOT2 != "" ]]; then
 	    define_MACS2_filenames $TAGC $ROOTF $ROOTFR "TAGNORM" $FLMKR
 	fi
 	jids+=":"
-	if [[ $jidRs != "" ]]; then DEPR="--dependency=afterok:$jidRs"; fi
+	if [[ $jidRs != "" ]]; then DEPR="--dependency=afterok:$jidRs --kill-on-invalid-dep=yes"; fi
 	jids+=$(sbatch $DEPR \
 	    --export FLDR=$FLDR,WIG="RDNA",PEAK=$PEAK,TREAT="$TREAT1R",CONTROL="$TREAT2R",FOLDER=$FOLDER,M2FILE=$M2FILE1 \
 	    ~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
@@ -342,7 +342,7 @@ if [[ $GENROOT2 != "" ]]; then
 	    define_MACS2_filenames $REP $ROOTF $ROOTFR "REPS" $FLMKR
 	fi
 	jids+=":"
-	if [[ $jidRs != "" ]]; then DEPR="--dependency=afterok:$jidRs"; fi
+	if [[ $jidRs != "" ]]; then DEPR="--dependency=afterok:$jidRs --kill-on-invalid-dep=yes"; fi
 	jids+=$(sbatch $DEPR \
 	    --export FLDR=$FLDR,WIG="RDNA",PEAK=$PEAK,TREAT="$TREAT1R",CONTROL="$CONTROL1R",FOLDER=$FOLDER,M2FILE=$M2FILE \
 	    ~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
