@@ -264,11 +264,11 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 
 	    if [[ $jids != "" ]]; then jids+=":"; fi
 	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs --kill-on-invalid-dep=yes"; fi
-	    jids+=$(sbatch $DEPB \
+	    jidT=$(sbatch $DEPB \
 		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATA",CONTROL="$CONTROLA",FOLDER=$FOLDER,M2FILE=$M2FILE1 \
 		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
-	    jids+=":"
-	    jids+=$(sbatch $DEPB \
+	    jids+="$jidT:"
+	    jids+=$(sbatch --dependency=afterok:$jidT --kill-on-invalid-dep=yes \
 		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATB",CONTROL="$CONTROLB",FOLDER=$FOLDER,M2FILE=$M2FILE2 \
 		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 
