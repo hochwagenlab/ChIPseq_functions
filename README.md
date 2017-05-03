@@ -11,18 +11,19 @@
 5. Keep an eye out for the following errors:  
    **slurmstepd: error: Exceeded step memory at some point.**  
    - If you see this in association with a Bowtie job:  
-     	(should not be an issue if files are less than 1.2Gb in zipped format)  
-     	- adjust the memory requirements for Bowtie_B3.sbatch   
-	- delete all associated fastq, fastq.gz, and sam files   
-	- rerun job  
+     (should not be an issue if files are less than 1.2Gb in zipped format)  
+     - adjust the memory requirements for Bowtie_B3.sbatch   
+     - delete all associated fastq, fastq.gz, and sam files   
+     - rerun job  
    - If you see this error with a MACS2 job:  
-     	- ensure all .bdg and .wig files are zipped    
-	- if not, rerun job with more memory for MACS2_FE_W3.sbatch
+     - ensure all .bdg and .wig files are zipped    
+     - if not, rerun job with more memory for MACS2_FE_W3.sbatch
+
    **slurmstepd: error: Exceeded job memory at some point.**  
    - If you see this error:  
-     	-  delete all associated files   
-	- increase memory on associated sbatch job (Bowtie or MACS2)   
-	- rerun job
+     - delete all associated files   
+     - increase memory on associated sbatch job (Bowtie or MACS2)   
+     - rerun job
 
 ## SOME RUN EXAMPLES
 Example 1: Start with input file A.fastq and ChIP file B.fastq, map to SacCer3, 
@@ -95,8 +96,7 @@ See MACS2 FOLDER with the following changes:
 On the off chance a set of files does not get consolidated into a single file:
 1) Check the file /scratch/$USER/MACS2_pipeline_$CHIP.txt. It will tell   
    you all of the jobs that ran for this pipeline run as a colon-separated list.
-2) For each job, just type: less /scratch/$USER/*[insert JobID here]* to   
-   see what might have gone wrong. These may be called:  
+2) For each job, just type: less /scratch/$USER/*[insert JobID here]* to see what might have gone wrong. These may be called:  
    - Bowtie_$JOBID.out  
    - MACS2_FE_$JOBID.out  
    - closing_ChIPseq_$JOBID.out  
