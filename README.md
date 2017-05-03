@@ -3,25 +3,25 @@
 ( updated: 5/3/17 )
 
 ## PREPARATION
-1. Move entire folder into your home on prince (keep folder name as  
+1. Move entire folder into your home on prince (keep folder name as
    "ChIPseq_Pipeline_v3")
 2. Move the 3 fasta files into a folder called "Library" in your home on prince
 3. Open each [4] sbatch script and adjust the email address
 4. Start running jobs (sbatch ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch)
 5. Keep an eye out for the following errors:  
    **slurmstepd: error: Exceeded step memory at some point.**  
-   - If you see this in association with a Bowtie job: 
+   - If you see this in association with a Bowtie job:  
      	(should not be an issue if files are less than 1.2Gb in zipped format)  
-     	- adjust the memory requirements for Bowtie_B3.sbatch  
-	- delete all associated fastq, fastq.gz, and sam files  
+     	- adjust the memory requirements for Bowtie_B3.sbatch   
+	- delete all associated fastq, fastq.gz, and sam files   
 	- rerun job  
    - If you see this error with a MACS2 job:  
-     	- ensure all .bdg and .wig files are zipped  
-	- if not, rerun job with more memory for MACS2_FE_W3.sbatch  
+     	- ensure all .bdg and .wig files are zipped    
+	- if not, rerun job with more memory for MACS2_FE_W3.sbatch
    **slurmstepd: error: Exceeded job memory at some point.**  
    - If you see this error:  
-     	-  delete all associated files  
-	- increase memory on associated sbatch job (Bowtie or MACS2)  
+     	-  delete all associated files   
+	- increase memory on associated sbatch job (Bowtie or MACS2)   
 	- rerun job
 
 ## SOME RUN EXAMPLES
@@ -67,7 +67,7 @@ Macs2 files will now go in folders with the notation: $TAGC-$GEN-$VER-MACS2 wher
   $GEN is either SacCer3 or SK1K, and  
   $VER will currently be either B3W3, 2mis_W3, or PM_W3.
 
-$FLMKR will be incorporated into all MACS2 output files. 
+$FLMKR will be incorporated into all MACS2 output files.  
 The term "Reps" will be incorporated into all MACS2 output files when applicable.
 
 ### MACS2 FILES:
@@ -97,9 +97,9 @@ On the off chance a set of files does not get consolidated into a single file:
    you all of the jobs that ran for this pipeline run as a colon-separated list.
 2) For each job, just type: less /scratch/$USER/*[insert JobID here]* to   
    see what might have gone wrong. These may be called:  
-       - Bowtie_$JOBID.out  
-       - MACS2_FE_$JOBID.out  
-       - closing_ChIPseq_$JOBID.out  
+   - Bowtie_$JOBID.out  
+   - MACS2_FE_$JOBID.out  
+   - closing_ChIPseq_$JOBID.out  
 
 ## NEW FEATURES
 - Bowtie_B3.sbatch automatically checks for a file in both zipped and unzipped   
