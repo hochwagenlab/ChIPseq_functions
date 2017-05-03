@@ -96,7 +96,7 @@ See MACS2 FOLDER with the following changes:
 On the off chance a set of files does not get consolidated into a single file:
 1) Check the file /scratch/$USER/MACS2_pipeline_$CHIP.txt. It will tell   
    you all of the jobs that ran for this pipeline run as a colon-separated list.
-2) For each job, just type: less /scratch/$USER/*[insert JobID here]* to see what might have gone wrong. These may be called:  
+2) For each job, just type: less "/scratch/$USER/*[insert JobID here]*" to see what might have gone wrong. These may be called:  
    - Bowtie_$JOBID.out  
    - MACS2_FE_$JOBID.out  
    - closing_ChIPseq_$JOBID.out  
