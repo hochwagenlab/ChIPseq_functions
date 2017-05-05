@@ -28,12 +28,12 @@ def read_bedgraph(bedgraph):
     f = open(bedgraph, 'r')
     bedG = f.readlines()
     f.close()
-
+    
     # step 2: organize bedgraph into a dict (chromosomes)
     # of lists (each row of bedgraph) of lists (start, end, score)
     for i in range( len(bedG) ):
         bedG[i] = bedG[i].strip().split('\t')
-
+        
     bedD = defaultdict(list)
     for i in bedG:
         if len(i) != 4:
@@ -41,11 +41,11 @@ def read_bedgraph(bedgraph):
             exit()
         else:
             bedD[i[0]].append( list(map(float, i[1:])) )
-
+            
     # step 3: for each chromosome do numeric sort by start
     for key in bedD.keys():
         bedD[key].sort()
-    
+        
     return bedD
 
 def create_variable_wiggle(bedgraph, bedD):
@@ -100,12 +100,13 @@ def create_variable_wiggle(bedgraph, bedD):
                         print ( "Warning: Overlaps begin at " + chrName + ":" + str( int( bedD[chrName][row][0] ) ) +
                                 "-" + str( int( bedD[chrName][row][1] ) ) + " ... Trimming row\n" )
                         bedD[chrName][row][0] = bedD[chrName][row-1][1]
-                    # skip rows with zero as score
-                    if bedD[chrName][row][2] != 0:
-                        # expand positions and convert to wiggle numbering system and add score for each position
-                        positions = range( int( bedD[chrName][row][0] ) + 1, int( bedD[chrName][row][1] ) + 1 )
-                        tmp = "\n".join( [ str(position) + "\t" + str( bedD[chrName][row][2] ) for position in positions ] )
-                        out.append(tmp)
+
+                # skip rows with zero as score
+                if bedD[chrName][row][2] != 0:
+                    # expand positions and convert to wiggle numbering system and add score for each position
+                    positions = range( int( bedD[chrName][row][0] ) + 1, int( bedD[chrName][row][1] ) + 1 )
+                    tmp = "\n".join( [ str(position) + "\t" + str( bedD[chrName][row][2] ) for position in positions ] )
+                    out.append(tmp)
                         
         # to only print out files for chromosomes with information
         if ( len(out) != 0 ):
