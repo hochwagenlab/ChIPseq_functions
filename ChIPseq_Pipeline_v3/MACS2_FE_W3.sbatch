@@ -13,7 +13,6 @@
 
 module purge
 module load macs2/intel/2.1.1
-module load python3/intel/3.5.3
 
 echo "#####################################################"
 echo ""
@@ -135,8 +134,11 @@ else
 	if [ -d ${M2FILE}_FE ]; then
 	    echo "Already converted ${M2FILE}_FE.bdg into wiggle"
 	else
-	    echo "Converting ${M2FILE}_FE.bdg into wiggle"
-	    python3 ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py \
+        module purge
+        module load python3/intel/3.5.3
+	    
+        echo "Converting ${M2FILE}_FE.bdg into wiggle"
+        python3 ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py \
 		-b ${M2FILE}_FE.bdg
 	    
 	    cd $DIR/$FOLDER
