@@ -1,11 +1,17 @@
 # README
 # ChIP-seq Pipeline version 3 
-( updated: 5/3/17 )
+( updated: 6/13/17 )
+
+## UPDATES
+1. New fasta file Yue.SK1.genome.fa
+2. GEN options are now: SacCer3, SK1K, SK1Yue-PM, and SK1Yue-2mis
+3. New variable: BDG. If you want to create bedgraphs but not wiggle files,  
+   set BDG=T and WIG=F (This is now the default.)
 
 ## PREPARATION
 1. Move entire folder into your home on prince (keep folder name as
    "ChIPseq_Pipeline_v3")
-2. Move the 3 fasta files into a folder called "Library" in your home on prince
+2. Move the 4 fasta files into a folder called "Library" in your home on prince
 3. Open each [4] sbatch script and adjust the email address
 4. Start running jobs (sbatch ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch)
 5. Keep an eye out for the following errors:  
