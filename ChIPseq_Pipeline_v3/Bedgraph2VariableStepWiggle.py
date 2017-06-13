@@ -70,13 +70,13 @@ def create_variable_wiggle(bedgraph, bedD):
         
     # step 2: determine chromosome naming system
     # chromosome list for SK1 and SacCer3 in chromosome number order
-    SK1 = ( "chr01", "chr02", "chr03", "chr04", "chr05", "chr06", "chr07", "chr08",
+    SK1K = ( "chr01", "chr02", "chr03", "chr04", "chr05", "chr06", "chr07", "chr08",
             "chr09", "chr10", "chr11", "chr12", "chr13", "chr14", "chr15", "chr16" )
     SacCer3 = ( "chrI", "chrII", "chrIII", "chrIV", "chrV", "chrVI", "chrVII", "chrVIII",
                 "chrIX", "chrX", "chrXI", "chrXII", "chrXIII", "chrXIV", "chrXV", "chrXVI" )
     # use first key as method to determine which genome data was mapped to
-    if list(bedD.keys())[0] in SK1:
-        chromSet = SK1
+    if list(bedD.keys())[0] in SK1K:
+        chromSet = SK1K
     elif list(bedD.keys())[0] in SacCer3:
         chromSet = SacCer3
     else:
@@ -85,7 +85,7 @@ def create_variable_wiggle(bedgraph, bedD):
 
     # step 3: for each chromosome make header, do calculations, and write to file
     for chrName in chromSet:
-        print( datetime.now().ctime() )
+        print( chrName + ": "  + datetime.now().ctime() )
         # create header
         header = ( "track type=wiggle_0 name=" + filename + "_" + chrName + " description=" + dataSource +
                    "\nvariableStep chrom=" + chrName + " span=1\n" )

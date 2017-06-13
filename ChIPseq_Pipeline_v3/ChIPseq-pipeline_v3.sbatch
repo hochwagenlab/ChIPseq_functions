@@ -22,7 +22,9 @@ module purge
 #   FLDR      -- Input folder name [ default: working directory when submitting job ]                           #
 #                Location where output files will reside                                                        #
 #   PEAK      -- Type of peaks to be called. Options are: "", "NARROW", "BROAD", or "BOTH" [ default: "" ]      #
-#   WIG       -- Whether or not to create wiggle files. Options are: "TRUE" or "FALSE" [ default: "T" ]         #
+#   BDG       -- Whether or not to create bedgraphs. Options are: "TRUE" or "FALSE" [ default: "T" ]            #
+#                Not needed when WIG is TRUE.
+#   WIG       -- Whether or not to create wiggle files. Options are: "TRUE" or "FALSE" [ default: "F" ]         #
 #   FLMKR     -- filemaker IDs from Datasets of ChIP samples in "-"-delimited and quoted list                   #
 #                Should not be strain IDS. Will be incorporated into all MACS2-related files.                   #
 #                REQUIRED for replicates and ChIP-vs-ChIP normalization.                                        #
@@ -45,7 +47,7 @@ module purge
 #   TAGC      -- Tagname for CHIP fastq                                                                         #
 #   TAGICON   -- Tagname for INCON fastq                                                                        #
 #   TAGCCON   -- Tagname for CHCON fastq                                                                        #
-#   GEN       -- Genome to align to. Current options: SK1 or SacCer3                                            #
+#   GEN       -- Genome to align to. Current options: SK1K, SacCer3, SK1Yue-PM, SK1Yue-2mis                     #
 #                                                                                                               #
 # SOME EXAMPLES                                                                                                 #
 ## Example 1: Start with input file A.fastq and ChIP file B.fastq, map to SacCer3, and create wiggle files      #
@@ -181,10 +183,14 @@ if [[ $GEN != "" ]]; then
 		jidRs+=$(sbatch --dependency=afterany:$jidBs \
 		    --export FLDR=$FLDR,FASTQIN=$FQIN,TAG=$TAGIN,GENOME="SacCer3_rDNA" \
 		    ~/ChIPseq_Pipeline_v3/Bowtie_B3.sbatch | awk '{print $NF}')
-	    else
+	    elif [[ $GEN == "SK1K" ]]; then
 		jidRs+=$(sbatch --dependency=afterany:$jidBs \
-		    --export FLDR=$FLDR,FASTQIN=$FQIN,TAG=$TAGIN,GENOME="SK1_rDNA" \
+		    --export FLDR=$FLDR,FASTQIN=$FQIN,TAG=$TAGIN,GENOME="SK1K_rDNA" \
 		    ~/ChIPseq_Pipeline_v3/Bowtie_B3.sbatch | awk '{print $NF}')
+	    elif [[ $GEN =~ "SK1Yue" ]]; then
+		jidRs+=$(sbatch --dependency=afterany:$jidBs \
+		    --export FLDR=$FLDR,FASTQIN=$FQIN,TAG=$TAGIN,GENOME="SK1Yue_rDNA" \
+		    ~/ChIPseq_Pipeline_v3/Bowtie_B3.sbatch | awk '{print $NF}')		
 	    fi
 	fi
     done
@@ -212,9 +218,10 @@ else
 fi
 
 ############### MACS2 ANALYSIS #################
-if [[ $WIG == "" ]]; then WIG="TRUE"; fi 
-if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
-    echo "wiggle files or peak files requested" >> $OUT
+if [[ $BDG == "" ]]; then BDG="TRUE"; fi
+if [[ $WIG == "" ]]; then WIG="FALSE"; fi
+if [[ $BDG =~ [Tt] || $PEAK != "" || $WIG =~ [Tt] ]]; then
+    echo "bedgraphs, wiggle files, or peak files requested" >> $OUT
 
     # some file name parsing for output filename information
     # only necessary if Bowtie alignment was not performed
@@ -265,11 +272,11 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	    if [[ $jids != "" ]]; then jids+=":"; fi
 	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs --kill-on-invalid-dep=yes"; fi
 	    jidT=$(sbatch $DEPB \
-		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATA",CONTROL="$CONTROLA",FOLDER=$FOLDER,M2FILE=$M2FILE1 \
+		--export FLDR=$FLDR,BDG=$BDG,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATA",CONTROL="$CONTROLA",FOLDER=$FOLDER,M2FILE=$M2FILE1 \
 		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 	    jids+="$jidT:"
 	    jids+=$(sbatch --dependency=afterok:$jidT --kill-on-invalid-dep=yes \
-		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATB",CONTROL="$CONTROLB",FOLDER=$FOLDER,M2FILE=$M2FILE2 \
+		--export FLDR=$FLDR,BDG=$BDG,WIG=$WIG,PEAK=$PEAK,TREAT="$TREATB",CONTROL="$CONTROLB",FOLDER=$FOLDER,M2FILE=$M2FILE2 \
 		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 
 	fi
@@ -310,7 +317,7 @@ if [[ $WIG =~ [Tt] || $PEAK != "" ]]; then
 	    if [[ $jids != "" ]]; then jids+=":"; fi
 	    if [[ $jidBs != "" ]]; then DEPB="--dependency=afterok:$jidBs --kill-on-invalid-dep=yes"; fi
 	    jids+=$(sbatch $DEPB \
-		--export FLDR=$FLDR,WIG=$WIG,PEAK=$PEAK,TREAT="$TREAT",CONTROL="$CONTROL",FOLDER=$FOLDER,M2FILE=$M2FILE \
+		--export FLDR=$FLDR,BDG=$BDG,WIG=$WIG,PEAK=$PEAK,TREAT="$TREAT",CONTROL="$CONTROL",FOLDER=$FOLDER,M2FILE=$M2FILE \
 		~/ChIPseq_Pipeline_v3/MACS2_FE_W3.sbatch | awk '{print $NF}')
 	fi
     fi

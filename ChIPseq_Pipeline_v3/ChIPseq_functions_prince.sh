@@ -62,12 +62,18 @@ function assign_genroot {
     JIDS=$4
 
     case $GEN in
-        SK1 ) GENROOT="SK1K-PM_B3"
-	      GENROOT2="SK1K-rDNA_B3"
-            ;;
+        SK1K ) GENROOT="SK1K-PM_B3"
+	       GENROOT2="SK1K-rDNA_B3"
+               ;;
         SacCer3 ) GENROOT="SacCer3-2mis_B3"
 	          GENROOT2="SacCer3-rDNA_B3"
-            ;;
+		  ;;
+	SK1Yue-PM ) GENROOT="SK1Yue-PM_B3"
+	            GENROOT2="SK1Yue-rDNA_B3"
+		    ;;
+	SK1Yue-2mis ) GENROOT="SK1Yue-2mis_B3"
+		      GENROOT2="SK1Yue-rDNA_B3"
+		      ;;
         * ) echo "Unknown genome listed." >> $OUT
 	    run_closing $TMPID $JIDS $TAGOUT
             exit 1
@@ -137,6 +143,8 @@ if [[ $ROOT =~ "SK1K" ]]; then
     ROOTFR="SK1K$VER"
 elif [[ $ROOT =~ "SacCer3" ]]; then
     ROOTFR="SacCer3$VER"
+elif [[ $ROOT =~ "SK1Yue" ]]; then
+    ROOTFR="SK1Yue$VER"
 fi
 }
 

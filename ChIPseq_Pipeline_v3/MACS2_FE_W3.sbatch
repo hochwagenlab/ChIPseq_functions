@@ -35,7 +35,10 @@ echo ""
 # CONTROL: control SAM/BAM file, can be space delimited for replicates
 # FOLDER:  the name of the folder where all of the MACS2 files will go
 # M2FILE:  the tagname of the files created with this script
-# WIG:     [optional] whether or not to make FE-normalized wiggle files 
+# BDG:     [optional] whether or not to make FE-normalized bedgraph files
+#               default is F [ "TRUE", "FALSE", "RDNA" ]
+# WIG:     [optional] whether or not to convert bedgraphs into wiggle files
+#               BDG is assumed when WIG is not FALSE
 #               default is F [ "TRUE", "FALSE", "RDNA" ]
 # PEAK:    [optional] type of peaks to be called 
 #               default is "" (none) [ "", "NARROW", "BROAD", "BOTH" ]
@@ -65,7 +68,16 @@ PEAK=$(echo $PEAK | tr '[:lower:]' '[:upper:]')
 
 GENSIZE=1.2e7
 
-if [[ $WIG =~ ^[Rr] ]]; then
+# ensuring that BDG and WIG are defined
+if [[ $BDG == "" ]]; then
+    if [[ $WIG == "" ]]; then
+	BDG="FALSE"
+    else
+	BDG=$WIG
+    fi
+fi
+
+if [[ $BDG =~ ^[Rr] ]]; then
     DUP="all"
 else
     DUP="auto"
@@ -82,7 +94,7 @@ fi
 #### Run MACS2 and downstream
 
 # use MACS2 to call peaks and create SPMR-normalized bedgraph files
-if [[ $WIG =~ [fF] ]]; then
+if [[ $BDG =~ [fF] ]]; then
     # if wiggle files do not need to be created, don't make bedgraphs
     # currently not ensuring that files are not already created before running functions
     if [[ $PEAK == "NARROW" || $PEAK == "BOTH" ]]; then
@@ -125,27 +137,29 @@ else
 	-c ${M2FILE}_control_lambda.bdg \
 	-o ${M2FILE}_FE.bdg -m FE
 
-    # convert bedgraphs created by MACS2 into wiggle files
-    if [ ! -f ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py ]; then
-	echo "Cannot find Bedgraph2VariableStepWiggle.py"
-	echo "This file should be located in ~/ChIPseq_Pipeline_v3"
-	exit 1
-    else
-	if [ -d ${M2FILE}_FE ]; then
-	    echo "Already converted ${M2FILE}_FE.bdg into wiggle"
+    if [[ $WIG =~ ^[TtRr] ]]; then
+	# convert bedgraphs created by MACS2 into wiggle files
+	if [ ! -f ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py ]; then
+	    echo "Cannot find Bedgraph2VariableStepWiggle.py"
+	    echo "This file should be located in ~/ChIPseq_Pipeline_v3"
+	    exit 1
 	else
-        module purge
-        module load python3/intel/3.5.3
-	    
-        echo "Converting ${M2FILE}_FE.bdg into wiggle"
-        python3 ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py \
-		-b ${M2FILE}_FE.bdg
-	    
-	    cd $DIR/$FOLDER
 	    if [ -d ${M2FILE}_FE ]; then
-		gzip ${M2FILE}_FE/*.wig
+		echo "Already converted ${M2FILE}_FE.bdg into wiggle"
 	    else
-		gzip $M2FILE*.wig
+		module purge
+		module load python3/intel/3.5.3
+	    
+		echo "Converting ${M2FILE}_FE.bdg into wiggle"
+		python3 ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py \
+		    -b ${M2FILE}_FE.bdg
+	    
+		cd $DIR/$FOLDER
+		if [ -d ${M2FILE}_FE ]; then
+		    gzip ${M2FILE}_FE/*.wig
+		else
+		    gzip $M2FILE*.wig
+		fi
 	    fi
 	fi
     fi

@@ -36,7 +36,7 @@ echo "JobID is: $SLURM_JOBID "
 # FASTQIN:      the fastq file to be aligned to a reference genome (zipped or unzipped)
 # TAG:          the tag name for the output sam file
 # GENOME:       the reference genome to align to
-#               Options include: SacCer3, SK1, SacCer3_rDNA, or SK1_rDNA
+#               Options include: SacCer3, SK1K, SK1Yue, SacCer3_rDNA, SK1K_rDNA, or SK1Yue_rDNA
 
 ####################################
 # adjusting file name information is as easy as adjusting $ROOT within each section
@@ -75,9 +75,9 @@ test -d Bowtie || mkdir Bowtie
 test -d Unaligned || mkdir Unaligned
 test -d ~/Library/Bowtie1_2 || mkdir ~/Library/Bowtie1_2
 
-########## SK1 ###########
+########## SK1_KEENEY ###########
 # outer if statement to check genome requested
-if [[ $GENOME == "SK1" ]]; then
+if [[ $GENOME == "SK1K" ]]; then
     ROOT="SK1K-PM_B3"
     # check if sam file exists in either of the expected spots
    if [ -f $TAG-$ROOT.sam ]; then
@@ -88,7 +88,7 @@ if [[ $GENOME == "SK1" ]]; then
       # check if database files exist
       if [ ! -f ~/Library/Bowtie1_2/sk1_MvO_V1.1.ebwt ]; then
 	  if [ ! -f ~/Library/sk1_MvO_V1.fasta ]; then
-	      echo "Put sk1_MvO_V1.fasta in ~/Library/ to align files to SK1"
+	      echo "Put sk1_MvO_V1.fasta in ~/Library/ to align files to SK1K"
 	      exit 1
 	  else
 	      cd ~/Library/Bowtie1_2
@@ -99,6 +99,56 @@ if [[ $GENOME == "SK1" ]]; then
       bowtie -p 8 -q -m 1 -v 0 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
 	  ~/Library/Bowtie1_2/sk1_MvO_V1 $FASTQ Bowtie/$TAG-$ROOT.sam
+      gzip Unaligned/$TAG*.fastq
+   fi
+
+elif [[ $GENOME == "SK1Yue-PM" ]]; then
+    ROOT="SK1Yue-PM_B3"
+    # check if sam file exists in either of the expected spots
+   if [ -f $TAG-$ROOT.sam ]; then
+      echo "Sam file $TAG-$ROOT.sam already exists. Continuing."
+   elif [ -f Bowtie/$TAG-$ROOT.sam ]; then
+      echo "Sam file Bowtie/$TAG-$ROOT.sam already exists. Continuing."
+   else
+      # check if database files exist
+      if [ ! -f ~/Library/Bowtie1_2/SK1Yue.1.ebwt ]; then
+	  if [ ! -f ~/Library/Yue.SK1.genome.fa ]; then
+	      echo "Put Yue.SK1.genome.fa in ~/Library/ to align files to SK1Yue"
+	      exit 1
+	  else
+	      cd ~/Library/Bowtie1_2
+	      bowtie-build -f ../Yue.SK1.genome.fa SK1Yue
+	      cd $DIR
+	  fi
+      fi
+      bowtie -p 8 -q -m 1 -v 0 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
+	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
+	  ~/Library/Bowtie1_2/SK1Yue $FASTQ Bowtie/$TAG-$ROOT.sam
+      gzip Unaligned/$TAG*.fastq
+   fi
+
+elif [[ $GENOME == "SK1Yue-2mis" ]]; then
+   ROOT="SK1Yue-2mis_B3"
+    # check if sam file exists in either of the expected spots
+   if [ -f $TAG-$ROOT.sam ]; then
+      echo "Sam file $TAG-$ROOT.sam already exists. Continuing."
+   elif [ -f Bowtie/$TAG-$ROOT.sam ]; then
+      echo "Sam file Bowtie/$TAG-$ROOT.sam already exists. Continuing."
+   else
+      # check if database files exist
+      if [ ! -f ~/Library/Bowtie1_2/SK1Yue.1.ebwt ]; then
+	  if [ ! -f ~/Library/Yue.SK1.genome.fa ]; then
+	      echo "Put Yue.SK1.genome.fa in ~/Library/ to align files to SK1Yue"
+	      exit 1
+	  else
+	      cd ~/Library/Bowtie1_2
+	      bowtie-build -f ../Yue.SK1.genome.fa SK1Yue
+	      cd $DIR
+	  fi
+      fi
+      bowtie -p 8 -q -m 1 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
+	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
+	  ~/Library/Bowtie1_2/SK1Yue $FASTQ Bowtie/$TAG-$ROOT.sam
       gzip Unaligned/$TAG*.fastq
    fi
 
@@ -132,8 +182,10 @@ elif [[ $GENOME == "SacCer3" ]]; then
 elif [[ $GENOME =~ "rDNA" ]]; then
     if [[ $GENOME =~ "SacCer3" ]]; then
 	ROOT="SacCer3-rDNA_B3"
-    elif [[ $GENOME =~ "SK1" ]]; then
+    elif [[ $GENOME =~ "SK1K" ]]; then
 	ROOT="SK1K-rDNA_B3"
+    elif [[ $GENOME =~ "SK1Yue" ]]; then
+	ROOT="SK1Yue-rDNA_B3"
     fi
    test -d rDNA || mkdir rDNA
 
@@ -174,9 +226,12 @@ elif [[ $GENOME =~ "rDNA" ]]; then
       if [[ $GENOME =~ "SacCer3" ]]; then
 	  perl ~/ChIPseq_Pipeline_v3/Position_shift_SAM.pl -i $TAG-rDNA-raw2.sam \
 	      -c chrXII -p 451418 -o $TAG-$ROOT.sam
-      elif [[ $GENOME =~ "SK1" ]]; then
+      elif [[ $GENOME =~ "SK1K" ]]; then
 	  perl ~/ChIPseq_Pipeline_v3/Position_shift_SAM.pl -i $TAG-rDNA-raw2.sam \
 	      -c chr12 -p 433028 -o $TAG-$ROOT.sam
+      elif [[ $GENOME =~ "SK1Yue" ]]; then
+	  perl ~/ChIPseq_Pipeline_v3/Position_shift_SAM.pl -i $TAG-rDNA-raw2.sam \
+	      -c chrXII -p 447013 -o $TAG-$ROOT.sam
       fi
 
       rm $TAG-rDNA-raw2.sam
