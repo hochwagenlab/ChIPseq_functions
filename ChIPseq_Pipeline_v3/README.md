@@ -17,7 +17,7 @@
 the directory (where "X" should be changed to your user name, to replace
 "tem298"):
 
-    `find . -type f | xargs sed -i 's/tem298/X/g'`
+    `find . -type f | xargs sed -i 's/tem298@nyu.edu/X@nyu.edu/g'`
 
 4. Start running jobs (sbatch ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch)
 5. Keep an eye out for the following errors:  
