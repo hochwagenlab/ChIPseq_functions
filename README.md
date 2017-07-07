@@ -1,3 +1,3 @@
-# ChIP-seq experiment analysis
+# ChIP-seq analysis
 
-ChIP-seq experiment analysis pipeline code.
+ChIP-seq experiment analysis pipelines.
