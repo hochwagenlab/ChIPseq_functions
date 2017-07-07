@@ -13,10 +13,10 @@
    "ChIPseq_Pipeline_v3")
 2. Move the 4 fasta files into a folder called "Library" in your home on prince
 3. Open each [4] sbatch script and adjust the email address
-    * You can do it from the CLI using `find` and `sed` by running the following
-command inside the directory:
+    * You can do it from the CLI using by running the following command inside
+the directory (where "X" should be your email address, to replace "tem298"):
 
-    `find . -type f | xargs sed -i 's/tem298/youremailadress/g'`
+    `find . -type f | xargs sed -i 's/tem298/X/g'`
 
 4. Start running jobs (sbatch ~/ChIPseq_Pipeline/ChIPseq-pipeline_v3.sbatch)
 5. Keep an eye out for the following errors:  
