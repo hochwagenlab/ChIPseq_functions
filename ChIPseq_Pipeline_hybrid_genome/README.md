@@ -69,5 +69,5 @@ CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM.sam \
 /scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM.sam",\
 INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam \
 /scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM.sam" \
-~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch### EXAMPLES:
+~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch
 ```
