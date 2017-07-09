@@ -26,15 +26,17 @@
 # CHIP      Absolute path(s) to ChIP (treatment) sample file(s).
 # INPUT     Absolute path(s) to input (control) sample file(s).
 #           NOTE: CHIP and INPUT file formats can be either:
-#                   - FASTQ         if GENNAME is provided; pipeline will starts
+#                   - FASTQ         if GENNAME is provided; pipeline will start
 #                                   with Bowtie mapping.
 #                   - SAM or BAM    if GENNAME is not provided; pipeline will
 #                                   skip Bowtie mapping.
-# GENNAME   Basename of reference genome FASTA file preceded by absolute path to #           directory containing the file. Must be provided if data files are
+# GENNAME   Basename of reference genome FASTA file preceded by absolute path to
+#           directory containing the file. Must be provided if data files are
 #           in FASTQ format; must not be provided if data files are alignments
 #           (BAM or SAM format).
 #           An existing Bowtie index with a basename ("ebwt") matching the
-#           file's is used if found in the same directory; otherwise a new index #           is built.
+#           file's is used if found in the same directory; otherwise a new index
+#           is built.
 
 # WITH REPLICATES:
 # The pipeline can be used with alignment maps (BAM or SAM files) of replicate
