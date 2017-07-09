@@ -172,7 +172,10 @@ then
     then
         echo ">>>>> Building Bowtie index..."
         module purge
-        module load bowtie/gnu/1.2.0 # Build index cd $GENDIR bowtie-build -f $FA $IX else
+        module load bowtie/gnu/1.2.0
+        # Build index
+        cd $GENDIR
+        bowtie-build -f $FA $IX else
         echo ">>>>> Found Bowtie index:"
         echo "      $GENDIR/$IX"
     fi
