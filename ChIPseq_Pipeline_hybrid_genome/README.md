@@ -42,7 +42,7 @@ If starting from `FASTQ` files, they must be run individually.
 Starting from `FASTQ` files; no replicates:
 
 ```
-sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_MACS2_SPMR",\
+sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_SPMR",\
 RUNDIR="/scratch/lv38",\
 CHIP="/scratch/lv38/HLYHHAFXX_n01_ah119spikea-062817.fastq.gz",\
 INPUT="/scratch/lv38/HLYHHAFXX_n01_ah119spikeb-062817.fastq.gz",\
@@ -53,21 +53,21 @@ GENNAME="/home/lv38/Library/S288C_SK1_Yue_hybrid_genome/S288c_SK1_Yue" \
 Starting from alignment files; no replicates:
 
 ```
-sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_MACS2_SPMR",\
+sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_SPMR",\
 RUNDIR="/scratch/lv38",\
-CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam",\
-INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam",\
+CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM.sam",\
+INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam",\
 ~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch
 ```
 
 Starting from alignment files with replicates:
 
 ```
-sbatch --export EXPID="Red1-WT-155-175-reps_S288C_SK1_Yue_PM_MACS2_SPMR",\
+sbatch --export EXPID="Red1-WT-155-175-reps_S288C_SK1_Yue_PM_SPMR",\
 RUNDIR="/scratch/lv38",\
-CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam \
-/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM_MACS2_SPMR.sam",\
-INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam \
-/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM_MACS2_SPMR.sam" \
+CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM.sam \
+/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM.sam",\
+INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam \
+/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM.sam" \
 ~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch### EXAMPLES:
 ```
