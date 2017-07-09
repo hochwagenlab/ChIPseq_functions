@@ -55,8 +55,8 @@ Starting from alignment files; no replicates:
 ```
 sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_MACS2_SPMR",\
 RUNDIR="/scratch/lv38",\
-CHIP="/scratch/lv38/MACS2_norm/AH119C-040114-SacCer3-2mis.sam",\
-INPUT="/scratch/lv38/MACS2_norm/AH119A-040114-SacCer3-2mis.sam",\
+CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam",\
+INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam",\
 ~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch
 ```
 
@@ -65,9 +65,9 @@ Starting from alignment files with replicates:
 ```
 sbatch --export EXPID="Red1-WT-155-175-reps_S288C_SK1_Yue_PM_MACS2_SPMR",\
 RUNDIR="/scratch/lv38",\
-CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM_MACS2_SPMR_FE.sam \
-/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM_MACS2_SPMR_FE.sam",\
-INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM_MACS2_SPMR_FE.sam \
-/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM_MACS2_SPMR_FE.sam" \
+CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam \
+/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM_MACS2_SPMR.sam",\
+INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM_MACS2_SPMR.sam \
+/scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM_MACS2_SPMR.sam" \
 ~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch### EXAMPLES:
 ```
