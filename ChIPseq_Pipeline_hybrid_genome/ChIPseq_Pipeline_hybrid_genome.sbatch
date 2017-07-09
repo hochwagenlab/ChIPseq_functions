@@ -175,7 +175,8 @@ then
         module load bowtie/gnu/1.2.0
         # Build index
         cd $GENDIR
-        bowtie-build -f $FA $IX else
+        bowtie-build -f $FA $IX
+    else
         echo ">>>>> Found Bowtie index:"
         echo "      $GENDIR/$IX"
     fi
