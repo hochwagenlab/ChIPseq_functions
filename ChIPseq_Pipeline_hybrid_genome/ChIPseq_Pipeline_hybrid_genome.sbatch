@@ -74,41 +74,41 @@
 #------------------------------------------------------------------------------#
 
 function elapsed_time() # Time elapsed since a STARTTIME=$(date +%s")
-{
-    local ENDTIME=$(date +%s)
-    
-    local TIME=$(($ENDTIME - $1))
-    if [ $TIME -lt 60 ]
-    then
-        echo "$TIME second(s)"
-    elif [ $TIME -ge 60 ]  && [ $TIME -lt 3600 ]
-    then
-        echo "$(($TIME / 60)) minute(s)"
-    else
-        echo "$(($TIME / 60 / 60)) hour(s)"
-    fi
-}
+ {
+     local ENDTIME=$(date +%s)
+
+     local TIME=$(($ENDTIME - $1))
+     if [ $TIME -lt 60 ]
+     then
+         echo "$TIME second(s)"
+     elif [ $TIME -ge 60 ]  && [ $TIME -lt 3600 ]
+     then
+         echo "$(($TIME / 60)) minute(s)"
+     else
+         echo "$(($TIME / 60 / 60)) hour(s)"
+     fi
+ }
 
 function check_arg() # Check if a variable is available (and not empty)
-{
-    if [ -z "$1" ]
-    then
-        echo "Please provide values for all required arguments"
-        exit 1
-    fi
-}
+ {
+     if [ -z "$1" ]
+     then
+         echo "Please provide values for all required arguments"
+         exit 1
+     fi
+ }
 
-function sam_to_sorted_and_indexed_bam() # Convert SAM file to BAM, sort, and index
-{
-    local BASE=${1%.sam}
-    local BAM=${BASE}.bam
-    local S_BAM=${BASE}_sorted.bam
+function sam_to_sorted_and_indexed_bam() # Convert to BAM file, sort, and index
+ {
+     local BASE=${1%.sam}
+     local BAM=${BASE}.bam
+     local S_BAM=${BASE}_sorted.bam
 
-    samtools view -bS $1 > $BAM
-    samtools sort -o $S_BAM $BAM
-    samtools index $S_BAM
+     samtools view -bS $1 > $BAM
+     samtools sort -o $S_BAM $BAM
+     samtools index $S_BAM
 
-    echo "$S_BAM"
+     echo "$S_BAM"
 }
 
 #------------------------------------------------------------------------------#
@@ -125,22 +125,22 @@ if [ ! -z "$GENNAME" ]
 then
     # Make sure the files are not alignments (GENNAME mistakenly provided)
     case "${CHIP: -4}" in .sam|.SAM|.bam|.BAM)
-        echo "GENNAME provided: expected FASTQ files"; exit 1 ;;
+        echo "GENNAME provided: expected FASTQ files"; exit 2 ;;
     esac
     case "${INPUT: -4}" in .sam|.SAM|.bam|.BAM)
-        echo "GENNAME provided: expected FASTQ files"; exit 1 ;;
+        echo "GENNAME provided: expected FASTQ files"; exit 2 ;;
     esac
 else
     # Make sure the files are alignments (GENNAME mistakenly not provided)
     case "${CHIP: -4}" in .sam|.SAM|.bam|.BAM)
         true ;;
     *)
-        echo "GENNAME not provided: expected alignment files"; exit 1 ;;
+        echo "GENNAME not provided: expected alignment files"; exit 2 ;;
     esac
     case "${INPUT: -4}" in .sam|.SAM|.bam|.BAM)
         true ;;
     *)
-        echo "GENNAME not provided: expected alignment files"; exit 1 ;;
+        echo "GENNAME not provided: expected alignment files"; exit 2 ;;
     esac
 fi
 
@@ -152,16 +152,16 @@ then
 fi
 
 # Check input files / dirs
-[ -f $CHIP ] || { echo "Could not find file $CHIP"; exit 1; }
-[ -f $INPUT ] || { echo "Could not find file $INPUT"; exit 1; }
-[ -d $RUNDIR ] || { echo "Could not find directory $RUNDIR"; exit 1; }
+[ -f $CHIP ] || { echo "Could not find file $CHIP"; exit 2; }
+[ -f $INPUT ] || { echo "Could not find file $INPUT"; exit 2; }
+[ -d $RUNDIR ] || { echo "Could not find directory $RUNDIR"; exit 2; }
 
 # Was GENNAME provided?
 if [ ! -z "$GENNAME" ]
 then
     GENDIR=$(dirname "$GENNAME")
     GENNAME=$(basename "$GENNAME")
-    [ -d $GENDIR ] || { echo "Could not find directory $GENDIR"; exit 1; }
+    [ -d $GENDIR ] || { echo "Could not find directory $GENDIR"; exit 2; }
 
     # Search for reference genome file; exit if not found
     FA=$(find $GENDIR -iname "${GENNAME}.fa*")
@@ -169,7 +169,7 @@ then
     then
         echo "Could not find reference genome FASTA file"
         echo "(Searching for file named ${GENNAME}.fa*)"
-        exit 1
+        exit 2
     fi
 
     # Search for Bowtie index (a file named as "fasta_base_name.1.ebwt")
