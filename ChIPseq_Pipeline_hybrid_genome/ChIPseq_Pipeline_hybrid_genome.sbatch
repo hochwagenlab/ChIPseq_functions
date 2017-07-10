@@ -17,7 +17,6 @@
 #------------------------------------------------------------------------------#
 # 1. If GENNAME is provided:
 #       . Maps FASTQ data to indicated genome (allowing no mismatches)
-#       . Generates sorted and indexed BAM file for visualization with IGV
 # 2. Normalizes by library size using MACS2 SPMR
 # 3. Removes noise using MACS2 fold enrichment compared to input
 
