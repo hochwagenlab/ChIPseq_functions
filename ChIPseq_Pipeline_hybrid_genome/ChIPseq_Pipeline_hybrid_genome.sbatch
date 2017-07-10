@@ -118,7 +118,7 @@ then
         echo "GENNAME provided: expected FASTQ files"; exit 1 ;;
     esac
 else
-    # Make sure the files are alignments (GENNAME not mistakenly provided)
+    # Make sure the files are alignments (GENNAME mistakenly not provided)
     case "${CHIP: -4}" in .sam|.SAM|.bam|.BAM)
         true ;;
     *)
