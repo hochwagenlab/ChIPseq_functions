@@ -108,6 +108,10 @@ function sam_to_sorted_and_indexed_bam() # Convert to BAM file, sort, and index
      samtools sort -o $S_BAM $BAM
      samtools index $S_BAM
 
+     # Clean up
+     rm $1
+     rm $BAM
+
      echo "$S_BAM"
 }
 
@@ -148,7 +152,7 @@ fi
 if [ -d "$EXPID" ]
 then
     echo "Output directory already exists"
-    exit 1
+    exit 2
 fi
 
 # Check input files / dirs
