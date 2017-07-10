@@ -4,8 +4,8 @@
 ##SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --verbose
-#SBATCH --time=1:00:00
-#SBATCH --mem=20GB
+#SBATCH --time=2:00:00
+#SBATCH --mem=26GB
 #SBATCH --job-name=Hybrid_genome_pipeline
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=lv38@nyu.edu
@@ -17,6 +17,7 @@
 #------------------------------------------------------------------------------#
 # 1. If GENNAME is provided:
 #       . Maps FASTQ data to indicated genome (allowing no mismatches)
+#       . Converts output from SAM to sorted and indexed BAM format
 # 2. Normalizes by library size using MACS2 SPMR
 # 3. Removes noise using MACS2 fold enrichment compared to input
 
@@ -72,10 +73,11 @@
 #                                  Functions                                   #
 #------------------------------------------------------------------------------#
 
-function elapsed_time() {
-    ENDTIME=$(date +%s)
-
-    TIME=$(($ENDTIME - $1))
+function elapsed_time() # Time elapsed since a STARTTIME=$(date +%s")
+{
+    local ENDTIME=$(date +%s)
+    
+    local TIME=$(($ENDTIME - $1))
     if [ $TIME -lt 60 ]
     then
         echo "$TIME second(s)"
@@ -87,7 +89,8 @@ function elapsed_time() {
     fi
 }
 
-function check_arg() {
+function check_arg() # Check if a variable is available (and not empty)
+{
     if [ -z "$1" ]
     then
         echo "Please provide values for all required arguments"
@@ -95,8 +98,19 @@ function check_arg() {
     fi
 }
 
-#------------------------------------------------------------------------------#
-#                                  IO checks                                   #
+function sam_to_sorted_and_indexed_bam() # Convert SAM file to BAM, sort, and index
+{
+    local BASE=${1%.sam}
+    local BAM=${BASE}.bam
+    local S_BAM=${BASE}_sorted.bam
+
+    samtools view -bS $1 > $BAM
+    samtools sort -o $S_BAM $BAM
+    samtools index $S_BAM
+
+    echo "$S_BAM"
+}
+
 #------------------------------------------------------------------------------#
 
 # Check arguments
@@ -198,6 +212,7 @@ cd ${EXPID}/
 #------------------------------------------------------------------------------#
 #                           If GENNAME is provided:                            #
 #                 Align reads to reference genome with Bowtie                  #
+#               Convert output SAM files to BAM, sort and index                #
 #------------------------------------------------------------------------------#
 
 if [ ! -z "$GENNAME" ]
@@ -250,9 +265,20 @@ then
     [ ! -z ${ZIP_CHIP+x} ] && echo ">>>>> gzip $CHIP" && gzip $CHIP
     [ ! -z ${ZIP_INPUT+x} ] && echo ">>>>> gzip $INPUT" && gzip $INPUT
 
+    # convert to BAM, sort and index
+    # In the process, reset file variables to map files (to use in next step)
+    echo ">>>>> Convert SAM to sorted and indexed BAM:"
+    module purge
+    module load samtools/intel/1.3.1
+
+    CHIP=$(sam_to_sorted_and_indexed_bam $CHIP_OUT)
+    echo "      $CHIP"
+    INPUT=$(sam_to_sorted_and_indexed_bam $INPUT_OUT)
+    echo "      $INPUT"
+    
     # Reset file variables to map files (to use in the next step)
-    CHIP=$CHIP_OUT
-    INPUT=$INPUT_OUT
+    #CHIP=$CHIP_OUT
+    #INPUT=$INPUT_OUT
 fi
 
 #------------------------------------------------------------------------------#
@@ -266,7 +292,7 @@ module load macs2/intel/2.1.1
 macs2 callpeak -t $CHIP -c $INPUT \
     --keep-dup="auto" -B --nomodel \
     --extsize 200 --SPMR -g 2.4e7 \
-    -n ${EXPID}
+    -n $EXPID
 
 #------------------------------------------------------------------------------#
 #                            MACS2 bdgcmp with FE                              #

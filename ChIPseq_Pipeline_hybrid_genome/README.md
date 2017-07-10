@@ -10,7 +10,9 @@ genomes:
 
 __`ChIPseq_Pipeline_hybrid_genome.sbatch`__
 
-1. If GENNAME is provided, maps `FASTQ` data to indicated genome
+1. If GENNAME is provided:
+    * Maps `FASTQ` data to indicated genome
+    * Converts output from `SAM` to sorted and indexed `BAM` format
 (allowing no mismatches)
 2. Normalizes by library size using `MACS2` SPMR
 3. Removes noise using `MACS2` fold enrichment compared to input
