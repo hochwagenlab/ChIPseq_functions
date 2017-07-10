@@ -15,8 +15,9 @@
 #------------------------------------------------------------------------------#
 #                                INSTRUCTIONS                                  #
 #------------------------------------------------------------------------------#
-# 1. If GENNAME is provided, maps FASTQ data to indicated genome
-#    (allowing no mismatches)
+# 1. If GENNAME is provided:
+#       . Maps FASTQ data to indicated genome (allowing no mismatches)
+#       . Generates sorted and indexed BAM file for visualization with IGV
 # 2. Normalizes by library size using MACS2 SPMR
 # 3. Removes noise using MACS2 fold enrichment compared to input
 
@@ -105,9 +106,8 @@ check_arg $RUNDIR
 check_arg $CHIP
 check_arg $INPUT
 
-# Abort if:
-#   GENNAME is provided with alignment files
-#   GENNAME is not provided with FASTQ files
+# Abort if: GENNAME is provided with alignment files
+#           GENNAME is not provided with FASTQ files
 if [ ! -z "$GENNAME" ]
 then
     # Make sure the files are not alignments (GENNAME mistakenly provided)
