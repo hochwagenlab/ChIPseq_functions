@@ -34,11 +34,26 @@ must not be provided if data files are alignments (`BAM` or `SAM` format).
 An existing `Bowtie` index with a basename (`ebwt`) matching the file's is used if
 found in the same directory; otherwise a new index is built.
 
-### Example job submission:
+### Running the pipeline:
 
-The pipeline can be used with alignment maps (`BAM` or `SAM` files) of replicate samples.
-To run with replicates simply add file names in the appropriate variable separated by spaces,
-as in: `CHIP="path/to/chip1.bam path/to/chip2.bam"`.
+To prepare the pipeline for running, follow the following steps:
+
+* Clone the `ChIPseq_functions` GitHub repository into your preferred location:
+    * `git clone https://github.com/hochwagenlab/ChIPseq_functions.git`
+* Move into the hybrid genome pipeline folder:
+    * `cd ChIPseq_Pipeline_hybrid_genome`
+* Change the existing email address to your own in all files (replace "X" by
+your own user name):
+    * `find . -type f | xargs sed -i 's/lv8@nyu.edu/X@nyu.edu/g'`
+* Point to the location of the `sbatch` file when subimittting the job (as in
+the examples below) 
+
+#### Example job submission:
+
+The pipeline can be run on the raw `FASTQ` output of the sequencing run or on
+previously made alignment maps (`BAM` or `SAM` files). In the latter case,
+replicate sample files can be run simply by adding file names in the appropriate
+variable separated by spaces, as in: `CHIP="path/to/chip1.bam path/to/chip2.bam"`.
 If starting from `FASTQ` files, they must be run individually.
 
 Starting from `FASTQ` files; no replicates:
@@ -49,7 +64,7 @@ RUNDIR="/scratch/lv38",\
 CHIP="/scratch/lv38/HLYHHAFXX_n01_ah119spikea-062817.fastq.gz",\
 INPUT="/scratch/lv38/HLYHHAFXX_n01_ah119spikeb-062817.fastq.gz",\
 GENNAME="/home/lv38/Library/S288C_SK1_Yue_hybrid_genome/S288c_SK1_Yue" \
-~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch
+~/ChIPseq_functions/ChIPseq_Pipeline_hybrid_genome/ChIPseq_Pipeline_hybrid_genome.sbatch
 ```
 
 Starting from alignment files; no replicates:
@@ -59,7 +74,7 @@ sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_SPMR",\
 RUNDIR="/scratch/lv38",\
 CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM.sam",\
 INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam",\
-~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch
+~/ChIPseq_functions/ChIPseq_Pipeline_hybrid_genome/ChIPseq_Pipeline_hybrid_genome.sbatch
 ```
 
 Starting from alignment files with replicates:
@@ -71,5 +86,5 @@ CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM.sam \
 /scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM.sam",\
 INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam \
 /scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM.sam" \
-~/Pipeline/ChIPseq_Pipeline_hybrid_genome.sbatch
+~/ChIPseq_functions/ChIPseq_Pipeline_hybrid_genome/ChIPseq_Pipeline_hybrid_genome.sbatch
 ```
