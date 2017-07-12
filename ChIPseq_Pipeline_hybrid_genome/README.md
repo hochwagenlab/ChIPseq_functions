@@ -43,7 +43,7 @@ To prepare the pipeline for running, follow the following steps:
 * Move into the hybrid genome pipeline folder:
     * `cd ChIPseq_Pipeline_hybrid_genome`
 * Change the existing email address to your own in all files (replace "X" by
-your own user name):
+your user name):
     * `find . -type f | xargs sed -i 's/lv8@nyu.edu/X@nyu.edu/g'`
 * Point to the location of the `sbatch` file when subimittting the job (as in
 the examples below) 
