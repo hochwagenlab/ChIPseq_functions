@@ -45,7 +45,7 @@ To prepare the pipeline for running, follow the following steps:
 * Change the existing email address to your own in all files (replace "X" by
 your user name):
     * `find . -type f | xargs sed -i 's/lv38@nyu.edu/X@nyu.edu/g'`
-* Point to the location of the `sbatch` file when subimittting the job (as in
+* Point to the location of the `sbatch` file when submittting the job (as in
 the examples below) 
 
 #### Example job submission:
