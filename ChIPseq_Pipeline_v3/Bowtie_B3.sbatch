@@ -36,7 +36,8 @@ echo "JobID is: $SLURM_JOBID "
 # FASTQIN:      the fastq file to be aligned to a reference genome (zipped or unzipped)
 # TAG:          the tag name for the output sam file
 # GENOME:       the reference genome to align to
-#               Options include: SacCer3, SK1K, SK1Yue, SacCer3_rDNA, SK1K_rDNA, or SK1Yue_rDNA
+#               Options include: SacCer3, SK1K, SK1Yue-PM, SK1Yue-2mis, 
+#                  SacCer3_rDNA, SK1K_rDNA, or SK1Yue_rDNA
 
 ####################################
 # adjusting file name information is as easy as adjusting $ROOT within each section
@@ -98,7 +99,7 @@ if [[ $GENOME == "SK1K" ]]; then
       fi
       bowtie -p 8 -q -m 1 -v 0 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
-	  ~/Library/Bowtie1_2/sk1_MvO_V1 $FASTQ Bowtie/$TAG-$ROOT.sam
+	  ~/Library/Bowtie1_2/sk1_MvO_V1 $FASTQ Bowtie/$TAG-$ROOT.sam --verbose
       gzip Unaligned/$TAG*.fastq
    fi
 
@@ -123,7 +124,7 @@ elif [[ $GENOME == "SK1Yue-PM" ]]; then
       fi
       bowtie -p 8 -q -m 1 -v 0 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
-	  ~/Library/Bowtie1_2/SK1Yue $FASTQ Bowtie/$TAG-$ROOT.sam
+	  ~/Library/Bowtie1_2/SK1Yue $FASTQ Bowtie/$TAG-$ROOT.sam --verbose
       gzip Unaligned/$TAG*.fastq
    fi
 
@@ -148,7 +149,7 @@ elif [[ $GENOME == "SK1Yue-2mis" ]]; then
       fi
       bowtie -p 8 -q -m 1 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
-	  ~/Library/Bowtie1_2/SK1Yue $FASTQ Bowtie/$TAG-$ROOT.sam
+	  ~/Library/Bowtie1_2/SK1Yue $FASTQ Bowtie/$TAG-$ROOT.sam --verbose
       gzip Unaligned/$TAG*.fastq
    fi
 
@@ -174,7 +175,7 @@ elif [[ $GENOME == "SacCer3" ]]; then
       fi
       bowtie -p 8 -q -m 1 -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
-	  ~/Library/Bowtie1_2/SacCer3 $FASTQ Bowtie/$TAG-$ROOT.sam
+	  ~/Library/Bowtie1_2/SacCer3 $FASTQ Bowtie/$TAG-$ROOT.sam --verbose
       gzip Unaligned/$TAG*.fastq
    fi
 
@@ -211,7 +212,7 @@ elif [[ $GENOME =~ "rDNA" ]]; then
       # align to a single rDNA repeat 
       # (note: SK1_rDNA_50bp_overhang.fastA has 50bp of overlapping sequence 
       # so multiple mappings are allowed)
-      bowtie -p 8 -a -q -S ~/Library/Bowtie1_2/rDNA_SK1 $FASTQ rDNA/$TAG-rDNA-raw.sam
+      bowtie -p 8 -a -q -S ~/Library/Bowtie1_2/rDNA_SK1 $FASTQ rDNA/$TAG-rDNA-raw.sam --verbose
       
       cd rDNA
       # to limit memory costs
