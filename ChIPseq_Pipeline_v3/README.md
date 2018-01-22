@@ -1,12 +1,15 @@
 # README
 # ChIP-seq Pipeline version 3 
-( updated: 6/13/17 )
+( updated: 1/22/18 )
 
 ## UPDATES
-1. New fasta file Yue.SK1.genome.fa
-2. GEN options are now: SacCer3, SK1K, SK1Yue-PM, and SK1Yue-2mis
-3. New variable: BDG. If you want to create bedgraphs but not wiggle files,  
-   set BDG=T and WIG=F (This is now the default.)
+1. This update is to allow for paired-end sequencing analysis.
+2. Two new scripts have been added to the folder: Bowtie_PE_B4.sbatch
+   and MACS2_FE_W4.sbatch. They are not currently called by 
+   ChIPseq-pipeline_v3.sbatch.
+3. See ChIPseq_PE_example.sh for a template to run the paired-end
+   sequencing pipeline.
+
 
 ## PREPARATION
 1. Move entire folder into your home on prince (keep folder name as
@@ -38,7 +41,7 @@ the directory (change "X" to your user name; this will replace "tem298"):
 
 ## SOME RUN EXAMPLES
 Example 1: Start with input file A.fastq and ChIP file B.fastq, map to SacCer3, 
-and create wiggle files and both narrow and broad peak files 
+and create bedgraph files and both narrow and broad peak files 
 (will also create wiggle plot of the rDNA)
 ```Bash
 sbatch --export INPUT=A.fastq,CHIP=B.fastq,GEN="SacCer3",TAGI="A",TAGC="B",PEAK="BOTH" \ 
@@ -68,6 +71,8 @@ All outputs will get a version name identifier:
 ### SAM:
 All new sam files will be given the following names: $TAG-$GENROOT.sam
 where $TAG is the user defined name and $GENROOT is one of the following:
+  - SK1Yue-PM_B3
+  - SK1Yue-2mis_B3
   - SacCer3-2mis_B3
   - SK1K-PM_B3
   - SacCer3-rDNA_B3
