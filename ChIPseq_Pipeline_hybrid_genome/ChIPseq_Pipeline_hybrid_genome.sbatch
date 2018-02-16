@@ -49,15 +49,15 @@
 # NO REPLICATES
 # sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_SPMR",\
 # RUNDIR="/scratch/lv38",\
-# CHIP="/scratch/lv38/HLYHHAFXX_n01_ah119spikea-062817.fastq.gz",\
-# INPUT="/scratch/lv38/HLYHHAFXX_n01_ah119spikeb-062817.fastq.gz",\
+# CHIP="/scratch/lv38/HLYHHAFXX_n01_ah119spikeb-062817.fastq.gz",\
+# INPUT="/scratch/lv38/HLYHHAFXX_n01_ah119spikea-062817.fastq.gz",\
 # GENNAME="/home/lv38/Library/S288C_SK1_Yue_hybrid_genome/S288c_SK1_Yue" \
 # ~/ChIPseq_functions/ChIPseq_Pipeline_hybrid_genome/ChIPseq_Pipeline_hybrid_genome.sbatch
 
 # sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_SPMR",\
 # RUNDIR="/scratch/lv38",\
 # CHIP="/scratch/lv38/ah119spikeb-062817_S288C_SK1_Yue_PM.sam",\
-# INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam",\
+# INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam" \
 # ~/ChIPseq_functions/ChIPseq_Pipeline_hybrid_genome/ChIPseq_Pipeline_hybrid_genome.sbatch
 
 # REPLICATES
@@ -156,8 +156,9 @@ then
 fi
 
 # Check input files / dirs
-[ -f $CHIP ] || { echo "Could not find file $CHIP"; exit 2; }
-[ -f $INPUT ] || { echo "Could not find file $INPUT"; exit 2; }
+# Comment out file check: will not work with replicates!
+#[ -f $CHIP ] || { echo "Could not find file $CHIP"; exit 2; }
+#[ -f $INPUT ] || { echo "Could not find file $INPUT"; exit 2; }
 [ -d $RUNDIR ] || { echo "Could not find directory $RUNDIR"; exit 2; }
 
 # Was GENNAME provided?
