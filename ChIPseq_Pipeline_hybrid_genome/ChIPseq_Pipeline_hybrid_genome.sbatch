@@ -45,7 +45,7 @@
 # Simply add file names in the appropriate variable separated by spaces:
 # CHIP="path/to/chip1.bam path/to/chip2.bam"
 
-### EXAMPLES: 
+### EXAMPLES:
 # NO REPLICATES
 # sbatch --export EXPID="AH119spikein-060717_YueSK1_S288C_PM_SPMR",\
 # RUNDIR="/scratch/lv38",\
@@ -119,7 +119,7 @@ function sam_to_sorted_and_indexed_bam() # Convert to BAM file, sort, and index
 
 # Check arguments
 check_arg $EXPID
-check_arg $RUNDIR 
+check_arg $RUNDIR
 check_arg $CHIP
 check_arg $INPUT
 
@@ -243,10 +243,10 @@ then
     echo ">>>>> Align reads with Bowtie:"
     [ -d $RUNDIR/Bowtie_hybrids ] || mkdir $RUNDIR/Bowtie_hybrids
     [ -d $RUNDIR/Unaligned_hybrids ] || mkdir $RUNDIR/Unaligned_hybrids
-    
+
     module purge
     module load bowtie/gnu/1.2.0
-    
+
     # Get input file names (without path to file or extension)
     # Build output file names
     CHIP_NAME=$(basename ${CHIP%.f*})
@@ -259,7 +259,7 @@ then
     --un $RUNDIR/Unaligned_hybrids/${CHIP_NAME}_${IX}_PM-Unaligned.fastq \
     --max $RUNDIR/Unaligned_hybrids/${CHIP_NAME}_${IX}_PM-Max.fastq \
     $GENDIR/$IX $CHIP $CHIP_OUT
-    
+
     echo "      $INPUT"
     bowtie -q -m 1 -v 0 -p 8 -S \
     --un $RUNDIR/Unaligned_hybrids/${INPUT_NAME}_${IX}_PM-Unaligned.fastq \
@@ -280,7 +280,7 @@ then
     echo "      $CHIP"
     INPUT=$(sam_to_sorted_and_indexed_bam $INPUT_OUT)
     echo "      $INPUT"
-    
+
     # Reset file variables to map files (to use in the next step)
     #CHIP=$CHIP_OUT
     #INPUT=$INPUT_OUT
@@ -294,7 +294,15 @@ echo ">>>>> Run macs2 callpeak..."
 module purge
 module load macs2/intel/2.1.1
 
+# Narrow
 macs2 callpeak -t $CHIP -c $INPUT \
+    --keep-dup="auto" -B --nomodel \
+    --extsize 200 --SPMR -g 2.4e7 \
+    -n $EXPID
+
+# Broad
+macs2 callpeak -t $CHIP -c $INPUT \
+    --broad \
     --keep-dup="auto" -B --nomodel \
     --extsize 200 --SPMR -g 2.4e7 \
     -n $EXPID
