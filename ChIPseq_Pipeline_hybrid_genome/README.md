@@ -88,3 +88,9 @@ INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam \
 /scratch/lv38/ah119spiked-01012018_S288C_SK1_Yue_PM.sam" \
 ~/ChIPseq_functions/ChIPseq_Pipeline_hybrid_genome/ChIPseq_Pipeline_hybrid_genome.sbatch
 ```
+
+## Spike-in normalization factor calculation
+
+If you are running this pipeline for a spike-in experiment, you can find details
+about how to calculate the normalization fator in the 
+[dedicated page](https://github.com/hochwagenlab/hwglabr2/wiki/Analysis-recipes).
