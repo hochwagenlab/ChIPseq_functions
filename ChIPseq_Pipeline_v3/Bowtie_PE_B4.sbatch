@@ -41,10 +41,16 @@ echo "JobID is: $SLURM_JOBID "
 #               Options include: SacCer3, SK1K, SK1Yue, SacCer3_rDNA, SK1K_rDNA, or SK1Yue_rDNA
 
 ####################################
-# adjusting file name information is as easy as adjusting $ROOT within each section
-
 # Define -X parameter of Bowtie for maximum distance between paired reads after alignment
 X=1000
+
+# to adjust for different sized reads to clip t0 50bp for alignment
+# aka to define -3
+# defines number of bases to be clipped off
+Prime3=0
+
+####################################
+# adjusting file name information is as easy as adjusting $ROOT within each section
 
 # Go to the currect starting folder
 cd /scratch/$USER
@@ -128,7 +134,8 @@ if [[ $GENOME == "SK1K" ]]; then
 	      cd $DIR
 	  fi
       fi
-      bowtie -p 8 -q -m 1 -v 0 -X $X -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
+      bowtie -p 8 -q -m 1 -v 0 -X $X -S -3 $Prime3 \
+	  --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
 	  ~/Library/Bowtie1_2/sk1_MvO_V1 -1 $FASTQ1 -2 $FASTQ2 \
 	  Bowtie/$TAG-$ROOT.sam --verbose
@@ -154,7 +161,8 @@ elif [[ $GENOME == "SK1Yue-PM" ]]; then
 	      cd $DIR
 	  fi
       fi
-      bowtie -p 8 -q -m 1 -v 0 -S -X $X --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
+      bowtie -p 8 -q -m 1 -v 0 -S -X $X -3 $Prime3 \
+	  --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
 	  ~/Library/Bowtie1_2/SK1Yue -1 $FASTQ1 -2 $FASTQ2 \
 	  Bowtie/$TAG-$ROOT.sam --verbose
@@ -180,7 +188,8 @@ elif [[ $GENOME == "SK1Yue-2mis" ]]; then
 	      cd $DIR
 	  fi
       fi
-      bowtie -p 8 -q -m 1 -S -X $X --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
+      bowtie -p 8 -q -m 1 -S -X $X -3 $Prime3 \
+      --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
 	  ~/Library/Bowtie1_2/SK1Yue -1 $FASTQ1 -2 $FASTQ2 \
 	  Bowtie/$TAG-$ROOT.sam --verbose
@@ -207,7 +216,8 @@ elif [[ $GENOME == "SacCer3" ]]; then
 	      cd $DIR
 	  fi
       fi
-      bowtie -p 8 -q -m 1 -X $X -S --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
+      bowtie -p 8 -q -m 1 -X $X -S -3 $Prime3 \
+      --un Unaligned/$TAG-${ROOT}_Unaligned.fastq \
 	  --max Unaligned/$TAG-${ROOT}_Max.fastq \
 	  ~/Library/Bowtie1_2/SacCer3 -1 $FASTQ1 -2 $FASTQ2 \
 	  Bowtie/$TAG-$ROOT.sam --verbose
@@ -247,7 +257,8 @@ elif [[ $GENOME =~ "rDNA" ]]; then
       # align to a single rDNA repeat 
       # (note: SK1_rDNA_50bp_overhang.fastA has 50bp of overlapping sequence 
       # so multiple mappings are allowed)
-      bowtie -p 8 -a -q -X $X -S ~/Library/Bowtie1_2/rDNA_SK1 \
+      bowtie -p 8 -a -q -X $X -S -3 $Prime3 \
+	 ~/Library/Bowtie1_2/rDNA_SK1 \
 	 -1 $FASTQ1 -2 $FASTQ2 rDNA/$TAG-rDNA-raw.sam --verbose
       
       cd rDNA

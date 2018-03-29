@@ -40,12 +40,13 @@ echo "JobID is: $SLURM_JOBID "
 #                  SacCer3_rDNA, SK1K_rDNA, or SK1Yue_rDNA
 
 ####################################
-# adjusting file name information is as easy as adjusting $ROOT within each section
-
 # to adjust for different sized reads to clip t0 50bp for alignment
 # aka to define -3
 # defines number of bases to be clipped off
 Prime3=0
+
+####################################
+# adjusting file name information is as easy as adjusting $ROOT within each section
 
 # Go to the currect starting folder
 cd /scratch/$USER

@@ -3,6 +3,10 @@
 # To use this script for paired-end sequencing data, 
 # fill in the next six lines and
 # submit as `source ChIPseq_PE_example.sh`
+
+# Set PE="False" if you want to treat data as single-end reads for pileups
+# You will also want to adjust TREAT, CONTROL, and M2FILEPE to say "SE"
+
 CHIP=
 TAGC=""
 INPUT=
