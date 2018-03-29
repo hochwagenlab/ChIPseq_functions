@@ -5,7 +5,7 @@
 # submit as `source ChIPseq_PE_example.sh`
 
 # Set PE="False" if you want to treat data as single-end reads for pileups
-# You will also want to adjust TREAT, CONTROL, and M2FILEPE to say "SE"
+# You will also want to adjust M2FILEPE to say "SE" but DON'T touch TREAT or CONTROL
 
 CHIP=
 TAGC=""
