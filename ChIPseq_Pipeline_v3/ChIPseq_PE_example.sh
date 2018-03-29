@@ -7,6 +7,8 @@
 # Set PE="False" if you want to treat data as single-end reads for pileups
 # You will also want to adjust M2FILEPE to say "SE" but DON'T touch TREAT or CONTROL
 
+# PE sequencing produces two FASTQ files. You only need to list one for CHIP and INPUT. The scripts will find the paired FASTQ.
+
 CHIP=
 TAGC=""
 INPUT=
