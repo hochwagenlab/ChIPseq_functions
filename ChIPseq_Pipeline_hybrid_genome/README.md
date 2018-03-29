@@ -93,4 +93,4 @@ INPUT="/scratch/lv38/ah119spikea-062817_S288C_SK1_Yue_PM.sam \
 
 If you are running this pipeline for a spike-in experiment, you can find details
 about how to calculate the normalization fator in the 
-[dedicated page](https://github.com/hochwagenlab/hwglabr2/wiki/Analysis-recipes).
+[dedicated page](https://github.com/hochwagenlab/ChIPseq_functions/blob/master/ChIPseq_Pipeline_hybrid_genome/Spike-in_normalization_factor.md).
