@@ -30,7 +30,7 @@ echo ""
 #    (or all reads for rDNA),
 #    FE normalization of wiggle files
 # For Paired-end: MACS2 only accepts BAM files
-#    No model or extension involved 
+#    No model or extension involved
 #
 ## VARIABLES ##
 #
@@ -43,7 +43,7 @@ echo ""
 # WIG:     [optional] whether or not to convert bedgraphs into wiggle files
 #               BDG is assumed when WIG is not FALSE
 #               default is F [ "TRUE", "FALSE", "RDNA" ]
-# PEAK:    [optional] type of peaks to be called 
+# PEAK:    [optional] type of peaks to be called
 #               default is "" (none) [ "", "NARROW", "BROAD", "BOTH" ]
 # FLDR:    [optional] working directory
 #               default is working directory when submitting
@@ -108,12 +108,12 @@ if [[ $PE =~ ^[Tt] ]]; then
 	if [[ $TREAT =~ " " ]]; then
 	    echo "Convert paired-end files into BAM format before running replicates through MACS2."
 	    exit 1
-	fi
+	'''fi
 	READ1=`tail -n 1 $TREAT | cut -f 1 | cut -f 1 -d " "`
 	READ2=`tail -n 2 $TREAT | head -n 1 | cut -f 1 | cut -f 1 -d " "`
 	if [[ $READ1 != $READ2 ]]; then
 	    echo "ChIP file $TREAT does not contain paired-end data"
-	    exit 1
+	    exit 1'''
 	fi
     else
 	echo "ChIP file $TREAT cannot be used for paired-end analysis"
@@ -126,19 +126,19 @@ if [[ $PE =~ ^[Tt] ]]; then
 	if [[ $CONTROL =~ " " ]]; then
 	    echo "Convert paired-end files into BAM format before running replicates through MACS2."
 	    exit 1
-	fi
+	'''fi
 	READ3=`tail -n 1 $CONTROL | cut -f 1 | cut -f 1 -d " "`
 	READ4=`tail -n 2 $CONTROL | head -n 1 | cut -f 1 | cut -f 1 -d " "`
 	if [[ $READ3 != $READ4 ]]; then
 	    echo "Input file $CONTROL does not contain paired-end data"
-	    exit 1
+	    exit 1'''
 	fi
     else
 	echo "Input file $CONTROL cannot be used for paired-end analysis"
 	exit 1
     fi
 
-RE='(.+).sam'	
+RE='(.+).sam'
 if [[ $TREAT =~ $RE ]]; then
     TREAT1=${BASH_REMATCH[1]}.bam
     echo "Converting ChIP file to BAM"
@@ -220,11 +220,11 @@ else
 	    else
 		module purge
 		module load python3/intel/3.5.3
-	    
+
 		echo "Converting ${M2FILE}_FE.bdg into wiggle"
 		python3 ~/ChIPseq_Pipeline_v3/Bedgraph2VariableStepWiggle.py \
 		    -b ${M2FILE}_FE.bdg
-	    
+
 		cd $DIR/$FOLDER
 		if [ -d ${M2FILE}_FE ]; then
 		    gzip ${M2FILE}_FE/*.wig
@@ -240,7 +240,3 @@ fi
 echo "complete"
 date
 echo ""
-
-
-
-
