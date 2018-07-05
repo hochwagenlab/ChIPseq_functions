@@ -1,0 +1,90 @@
+########## CHIP-SEQ PIPELINE VERSION 4 ###########
+All outputs will get a version name identifier:
+    B3 means that the single-end Sam file was created with this pipeline version
+    B4 means that paired-end Sam file was created with this pipeline version
+    W4 means that the peak/bedgraph/wiggle files were made with this pipeline version
+    B3W3 means that the everything was made with this pipeline version
+
+All output files will also may also get the following identifiers within their names:
+    PE will indicate Bowtie and/or MACS2 will treat the files as paired-end reads.
+    The mapped read length will be listed as Xbp where X is the number of bases aligned when the length is not 50bp.
+
+SAM:
+All new sam files will be given the following names: $TAG-$GENROOT.sam
+where $TAG is the user defined name and $GENROOT is one of the following:
+  - SK1Yue-PM
+  - SK1Yue-2mis
+  - SacCer3-2mis
+  - SK1K-PM
+  - SacCer3-rDNA
+  - SK1K-rDNA
+
+MACS2 FOLDER:
+Macs2 files will now go in folders with the notation: $TAGC-$GEN-$VER-MACS2 where
+  $TAGC is either the tagname of the ChIP file or the user-defined name $REP,
+  $GEN is either SacCer3 or SK1K, and
+  $VER will currently be either B3W4/B4W4, 2mis_W4, or PM_W4.
+$FLMKR will be incorporated into all MACS2 output files.
+The term "Reps" will be incorporated into all MACS2 output files when applicable.
+
+MACS2 FILES:
+See MACS2 FOLDER with the following changes:
+    All files will include the method of Bowtie analysis: 2mis, PM, or rDNA.
+    Wiggle and bedgraph files will include the normalization method: FE.
+    ChIP vs ChIP analysis is identified as ChvCh.
+
+########## CHIP-SEQ PIPELINE VERSION 3 ###########
+All outputs will get a version name identifier:
+    B3 means that the Sam file was created with this pipeline version
+    W3 means that the peak/bedgraph/wiggle files were made with this pipeline version
+    B3W3 means that the everything was made with this pipeline version
+
+SAM:
+All new sam files will be given the following names: $TAG-$GENROOT.sam where $TAG is the user defined name and $GENROOT is one of the following:
+    SK1Yue-PM_B3
+    SK1Yue-2mis_B3
+    SacCer3-2mis_B3
+    SK1K-PM_B3
+    SacCer3-rDNA_B3
+    SK1K-rDNA_B3
+
+MACS2 FOLDER:
+Macs2 files will now go in folders with the notation: $TAGC-$GEN-$VER-MACS2 where
+$TAGC is either the tagname of the ChIP file or the user-defined name $REP,
+$GEN is either SacCer3 or SK1K, and
+$VER will currently be either B3W3, 2mis_W3, or PM_W3.
+
+$FLMKR will be incorporated into all MACS2 output files.
+The term "Reps" will be incorporated into all MACS2 output files when applicable.
+
+MACS2 FILES:
+See MACS2 FOLDER with the following changes:
+    All files will include the method of Bowtie analysis: 2mis, PM, or rDNA.
+    Wiggle and bedgraph files will include the normalization method: FE.
+    ChIP vs ChIP analysis is identified as either: ChvCh or InvIn.
+
+########## CHIP-SEQ PIPELINE VERSION 2 ###########
+SAM:
+All new sam files will be given the following names: $TAG-$GENROOT.sam where $TAG is the user defined name and $GENROOT is one of the following:
+  SK1K-PM
+  SacCer3-2mis
+
+MACS2 FOLDER:
+Macs2 files will now go in folders with the notation: $TAGC-MACS2 where
+$TAGC is either the tagname of the ChIP file or the user-defined name $REP
+
+MACS2 FILES:
+Macs2 files will be named with the following base: $TAGC-$GENROOT-M$MLOW_MACS2 where
+$TAGC is either the tagname of the ChIP file or the user-defined name $REP,
+and $MLOW is listed only when model-building is enabled.
+
+Replicates:
+When replicates are combined, a new BAM file is created called $REP-$FLMKR-reps-$GENROOT.bam for the ChIP file
+and $REP-$FLMKR_input-reps-$GENROOT.bam for the input file.
+Also "rep" and the filemaker IDs were incorporated into every file and folder created as part of the MACS2 analysis.
+
+Double-normalization was also possible for wiggle-files only.
+
+########## CHIP-SEQ PIPELINE VERSION 1 ###########
+
+

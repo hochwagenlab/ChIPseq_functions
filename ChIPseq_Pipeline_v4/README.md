@@ -77,18 +77,18 @@ within their names:
 ### SAM:
 All new sam files will be given the following names: $TAG-$GENROOT.sam
 where $TAG is the user defined name and $GENROOT is one of the following:
-  - SK1Yue-PM_B3
-  - SK1Yue-2mis_B3
-  - SacCer3-2mis_B3
-  - SK1K-PM_B3
-  - SacCer3-rDNA_B3
-  - SK1K-rDNA_B3
+  - SK1Yue-PM
+  - SK1Yue-2mis
+  - SacCer3-2mis
+  - SK1K-PM
+  - SacCer3-rDNA
+  - SK1K-rDNA
 
 ### MACS2 FOLDER:
 Macs2 files will now go in folders with the notation: $TAGC-$GEN-$VER-MACS2 where  
   $TAGC is either the tagname of the ChIP file or the user-defined name $REP,  
   $GEN is either SacCer3 or SK1K, and  
-  $VER will currently be either B3W3, 2mis_W3, or PM_W3.
+  $VER will currently be either B3W4/B4W4, 2mis_W4, or PM_W4.
 
 $FLMKR will be incorporated into all MACS2 output files.  
 The term "Reps" will be incorporated into all MACS2 output files when applicable.
@@ -100,8 +100,8 @@ See MACS2 FOLDER with the following changes:
   - ChIP vs ChIP analysis is identified as ChvCh.
 
 ## ERROR/OUTPUT FILES
-- The pipeline automatically makes two error/output files that cannot be removed _
-  out how to remove yet. Both should be essentially empty at all times. One   
+- The pipeline automatically makes two error/output files that cannot_
+  be removed. Both should be essentially empty at all times. One  
   (closing_ChIPseq_$JOBID.out) will go to /scratch/$USER and the other (slurm_$JOBID.out)  
   will go to the working directory where you submit the job.  
 - The pipeline will initially make a /scratch/$USER/MACS2_pipeline_$CHIP.txt.  
