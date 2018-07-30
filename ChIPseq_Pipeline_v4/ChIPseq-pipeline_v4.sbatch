@@ -28,6 +28,7 @@ module purge
 #   FLMKR     -- filemaker IDs from Datasets of ChIP samples in "-"-delimited and quoted list                   #
 #                Should not be strain IDS. Will be incorporated into all MACS2-related files.                   #
 #                REQUIRED for replicates and ChIP-vs-ChIP normalization.                                        #
+#   PE        -- Whether or not the samples are paired-end and should be treated as such [ default: "F" ]       #
 #                                                                                                               #
 # CHIP vs CHIP NORMALIZATION                                                                                    #
 ## For mock controls, no tag controls, or histones                                                              #
@@ -369,12 +370,11 @@ if [[ $BDG =~ [Tt] || $PEAK != "" || $WIG =~ [Tt] ]]; then
 		~/ChIPseq_Pipeline_v4/MACS2_FE_W4.sbatch | awk '{print $NF}')
 	fi
     fi
-fi
 
 #################### rDNA Pipeline ################
 # only runs if using the entire pipeline [Bowtie included]
-if [[ $GENROOT2 != "" ]]; then
-    change_genroot $GENROOT2
+    if [[ $GENROOT2 != "" ]]; then
+	change_genroot $GENROOT2
 	if [[ $REP == "" ]]; then
 	    define_MACS2_filenames $TAGC $ROOTF $ROOTFR "NORMAL" $FLMKR
 	else
@@ -385,6 +385,7 @@ if [[ $GENROOT2 != "" ]]; then
 	jids+=$(sbatch $DEPR \
 	    --export FLDR=$FLDR,WIG="RDNA",PEAK=$PEAK,TREAT="$TREAT1R",CONTROL="$CONTROL1R",FOLDER=$FOLDER,M2FILE=$M2FILE,PE=$PE \
 	    ~/ChIPseq_Pipeline_v4/MACS2_FE_W4.sbatch | awk '{print $NF}')
+    fi
 fi
 
 ################### CLOSING FUNCTION ################
